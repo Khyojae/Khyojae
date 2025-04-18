@@ -1,8 +1,7 @@
 ## Hi there 👋
-
+[![Solved.ac Profile](http://mazassumnida.wtf/api/v2/generate_badge?boj=gywo1l)](https://solved.ac/gywo1l/)
 <!--
 **Khyojae/Khyojae** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
-[![Solved.ac Profile](http://mazassumnida.wtf/api/v2/generate_badge?boj=gywo1l)](https://solved.ac/gywo1l/)
 
 
 Here are some ideas to get you started:
