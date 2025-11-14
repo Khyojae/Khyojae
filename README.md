@@ -30,6 +30,6 @@
 
 📝 Certificate
 ---
-adsp ('25.02. )
+⦁ adsp ('25.02. )
 
 
