@@ -1,3 +1,5 @@
+![header](https://capsule-render.vercel.app/api?type=waving&color=gradient&height=300&section=header&text=Good%20to%20see%20you%20%F0%9F%A4%97)
+
 ⚙️ Algorithm
 ---
 ![mazandi profile](http://mazandi.herokuapp.com/api?handle=gywo1l&theme=dark)
@@ -9,7 +11,7 @@
 
 ✍️Studying recently
 ---
-Java Spring (boot), MySQL
+<img src="https://img.shields.io/badge/SpringBoot-6DB33F?style=flat-square&logo=Spring%20Boot&logoColor=white"/>, <img src="https://img.shields.io/badge/MySQL-4479A1?style=flat-square&logo=MySQL&logoColor=white"/>, <img src="https://img.shields.io/badge/C%2B%2B-00599C?style=flat-square&logo=c%2B%2B&logoColor=white"/>
 
 
 🎨 Activities
@@ -21,7 +23,7 @@ Java Spring (boot), MySQL
 | 패널| 하나은행 소비자패널 | researcher | '25. 03. 01. ~ '25. 12. 31.|
 | 동아리| 창업동아리 | 개발 | '25. 09. 01. ~ '25. 12. 31.|
 | 대회| 신협 신사업아이디어공모전 | 우수상 | '25. 09. 24. |
-| 대회| 2025 k조선 해커톤| 본선진출 | '25. 09. 08. ~ '25. 11. 22. |
+| 대회| 2025 k조선 해커톤| 본선진출(백엔드) | '25. 09. 08. ~ '25. 11. 22. |
 
 
 
