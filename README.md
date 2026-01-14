@@ -6,7 +6,7 @@
 
 💻 Git stats
 ----
-![Khyojae's GitHub stats](https://github-readme-stats.vercel.app/api?username=Khyojae&show_icons=true&theme=radical)
+[![Khyojae's GitHub stats](https://github-readme-stats.vercel.app/api?username=Khyojae)](https://github.com/Khyojae/github-readme-stats)
 
 
 ✍️Studying recently
