@@ -23,14 +23,13 @@
 | 대회| 상명대학교 2025학년도 창업경진대회(기술창업 부문)| 우수상 | '25. 12. 19. |
 
 
-
-
-
-
-
 📝 Certificate
 ---
 ⦁ Adsp ('25.02. )
+
+Open Source Contributions
+---
+
 
 
 <a href="https://github.com/devxb/gitanimals">
