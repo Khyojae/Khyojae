@@ -1,5 +1,7 @@
 /**
- * GitHub 기여 데이터를 SVG 카드로 생성 (카드 그리드 스타일)
+ * GitHub 기여 데이터를 SVG 카드로 생성
+ *
+ * @source https://github.com/dbwls99706/oss-contribution-card
  */
 
 const themes = {
@@ -97,8 +99,7 @@ export function generateSVG(data, options = {}) {
 
   // 전체 높이 계산
   const gridHeight = rows * cardHeight + (rows - 1) * cardGap;
-  const creditHeight = 20;
-  const totalHeight = headerHeight + gridHeight + padding * 2 + creditHeight;
+  const totalHeight = headerHeight + gridHeight + padding * 2;
 
   // 그라데이션 배경
   const background = `
@@ -173,19 +174,11 @@ export function generateSVG(data, options = {}) {
     `;
   }).join('');
 
-  // 크레딧
-  const credit = `
-    <text x="${width - padding}" y="${totalHeight - 10}" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="9" fill="${colors.credit}" text-anchor="end" opacity="0.7">
-      github.com/dbwls99706/oss-contribution-card
-    </text>
-  `;
-
   return `
 <svg width="${width}" height="${totalHeight}" viewBox="0 0 ${width} ${totalHeight}" xmlns="http://www.w3.org/2000/svg">
   ${background}
   ${header}
   ${cards}
-  ${credit}
 </svg>
   `.trim();
 }

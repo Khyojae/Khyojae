@@ -1,5 +1,7 @@
 /**
  * GitHub API를 사용하여 외부 레포에 merged된 PR 목록을 가져옴
+ *
+ * @source https://github.com/dbwls99706/oss-contribution-card
  */
 
 import https from 'https';

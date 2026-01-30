@@ -1,5 +1,11 @@
 #!/usr/bin/env node
 
+/**
+ * OSS Contribution Card - GitHub 프로필에 오픈소스 기여 내역 표시
+ *
+ * @source https://github.com/dbwls99706/oss-contribution-card
+ */
+
 import { fetchContributions } from './fetch-contributions.js';
 import { generateSVG, generateEmptySVG } from './generate-svg.js';
 import { writeFileSync, existsSync, mkdirSync } from 'fs';
