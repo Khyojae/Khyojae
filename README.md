@@ -12,22 +12,12 @@ GitHub 프로필 README에 **외부 레포지토리 기여 내역**을 자동으
 ### Dark
 ![Dark Theme](./contributions-dark.svg)
 
-### Nord
-![Nord Theme](./contributions-nord.svg)
-
-### Dracula
-![Dracula Theme](./contributions-dracula.svg)
-
-### Tokyo Night
-![Tokyo Theme](./contributions-tokyo.svg)
-
 ## Features
 
 - **외부 기여만 표시** - 자기 레포 제외, 다른 프로젝트에 merge된 PR만
 - **자동 업데이트** - GitHub Actions로 매일 자동 갱신
 - **5가지 테마** - light, dark, nord, dracula, tokyo
-- **애니메이션** - 부드러운 fade-in 효과
-- **반응형** - compact 모드 지원
+- **컴팩트 디자인** - github-readme-stats 스타일
 
 ## 사용 방법
 
@@ -79,7 +69,7 @@ your-username/
 | Variable | Description | Options | Default |
 |----------|-------------|---------|---------|
 | `THEME` | 테마 선택 | `light`, `dark`, `nord`, `dracula`, `tokyo` | `light` |
-| `MAX_REPOS` | 표시할 최대 레포 수 | 1-10 | `5` |
+| `MAX_REPOS` | 표시할 최대 레포 수 | 1-10 | `6` |
 
 ### 로컬 실행
 
@@ -89,13 +79,6 @@ node src/index.js <username>
 
 # 테마 지정
 THEME=dark node src/index.js <username>
-
-# 모든 옵션
-GITHUB_USERNAME=dbwls99706 \
-THEME=tokyo \
-MAX_REPOS=3 \
-OUTPUT_PATH=./my-contributions.svg \
-node src/index.js
 ```
 
 ## 동작 원리
@@ -111,17 +94,12 @@ node src/index.js
 │                                                         │
 │  2. 레포별로 그룹화 & PR 수 기준 정렬                    │
 │                                                         │
-│  3. SVG 카드 생성 (애니메이션 포함)                      │
+│  3. SVG 카드 생성                                        │
 │                                                         │
 │  4. contributions.svg 커밋 & 푸시                        │
 │                                                         │
 └─────────────────────────────────────────────────────────┘
 ```
-
-## API 제한
-
-- GitHub Search API: 인증 없이 분당 10회, 토큰 사용 시 분당 30회
-- GitHub Actions에서는 자동으로 `GITHUB_TOKEN`을 사용하므로 제한 걱정 없음
 
 ## License
 
