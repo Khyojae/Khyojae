@@ -69,7 +69,8 @@ export function generateSVG(data, options = {}) {
   const {
     theme = 'light',
     maxRepos = 4,
-    width = 480
+    width = 480,
+    title = 'Open-Source Contributions'
   } = options;
 
   const colors = themes[theme] || themes.light;
@@ -116,7 +117,7 @@ export function generateSVG(data, options = {}) {
   const header = `
     <g transform="translate(${padding}, ${padding})">
       <text font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="22" font-weight="700" fill="${colors.title}">
-        Open-Source Contributions
+        ${escapeXml(title)}
       </text>
       <g transform="translate(0, 35)">
         <svg width="20" height="20" viewBox="0 0 20 20" fill="${colors.subtitle}">${icons.check}</svg>
@@ -133,9 +134,11 @@ export function generateSVG(data, options = {}) {
     const row = Math.floor(index / cols);
     const x = padding + col * (cardWidth + cardGap);
     const y = headerHeight + padding + row * (cardHeight + cardGap);
+    const prUrl = pr.url || '#';
 
     return `
-      <g transform="translate(${x}, ${y})">
+      <a href="${escapeXml(prUrl)}" target="_blank">
+      <g transform="translate(${x}, ${y})" style="cursor: pointer;">
         <!-- Card Background -->
         <rect width="${cardWidth}" height="${cardHeight}" rx="12" fill="${colors.cardBg}"/>
 
@@ -171,11 +174,12 @@ export function generateSVG(data, options = {}) {
           </text>
         </g>
       </g>
+      </a>
     `;
   }).join('');
 
   return `
-<svg width="${width}" height="${totalHeight}" viewBox="0 0 ${width} ${totalHeight}" xmlns="http://www.w3.org/2000/svg">
+<svg width="${width}" height="${totalHeight}" viewBox="0 0 ${width} ${totalHeight}" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
   ${background}
   ${header}
   ${cards}
@@ -187,7 +191,7 @@ export function generateSVG(data, options = {}) {
  * 기여가 없을 때의 SVG
  */
 export function generateEmptySVG(username, options = {}) {
-  const { theme = 'light', width = 480 } = options;
+  const { theme = 'light', width = 480, title = 'Open-Source Contributions' } = options;
   const colors = themes[theme] || themes.light;
 
   return `
@@ -200,7 +204,7 @@ export function generateEmptySVG(username, options = {}) {
   </defs>
   <rect width="${width}" height="150" fill="url(#bgGrad)" rx="16"/>
   <text x="30" y="45" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="22" font-weight="700" fill="${colors.title}">
-    Open-Source Contributions
+    ${escapeXml(title)}
   </text>
   <text x="${width / 2}" y="100" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" fill="${colors.cardText}" text-anchor="middle">
     No contributions yet. Start contributing!

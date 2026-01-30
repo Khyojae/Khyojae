@@ -70,6 +70,7 @@ your-username/
 |----------|-------------|---------|---------|
 | `THEME` | 테마 선택 | `light`, `dark`, `nord`, `dracula`, `tokyo` | `light` |
 | `MAX_REPOS` | 표시할 최대 레포 수 | 1-10 | `6` |
+| `TITLE` | 커스텀 타이틀 | 문자열 | `Open-Source Contributions` |
 
 ### 로컬 실행
 

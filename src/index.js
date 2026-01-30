@@ -56,6 +56,7 @@ async function main() {
   const theme = process.env.THEME || 'light';
   const maxRepos = parseInt(process.env.MAX_REPOS || '6', 10);
   const outputPath = process.env.OUTPUT_PATH || './contributions.svg';
+  const title = process.env.TITLE || 'Open-Source Contributions';
   const useMock = process.env.USE_MOCK === 'true' || process.argv.includes('--mock');
 
   if (!username) {
@@ -82,8 +83,8 @@ async function main() {
 
     // SVG 생성
     const svg = data.totalRepos > 0
-      ? generateSVG(data, { theme, maxRepos })
-      : generateEmptySVG(username, { theme });
+      ? generateSVG(data, { theme, maxRepos, title })
+      : generateEmptySVG(username, { theme, title });
 
     // 출력 디렉토리 생성 (필요시)
     const outputDir = dirname(outputPath);
