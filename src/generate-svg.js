@@ -1,70 +1,40 @@
 /**
- * GitHub 기여 데이터를 SVG 카드로 생성 (github-readme-stats 스타일)
+ * GitHub 기여 데이터를 SVG 카드로 생성 (카드 그리드 스타일)
  */
 
 const themes = {
   light: {
-    background: '#ffffff',
-    border: '#e4e2e2',
-    title: '#2f80ed',
-    text: '#333333',
-    label: '#666666',
-    value: '#333333',
-    repoName: '#0366d6',
-    icon: '#586069',
-    prCount: '#28a745'
+    bgGradient: ['#e8f4fc', '#f0e6fa'],
+    cardBg: '#1e2130',
+    cardBorder: '#2a2f45',
+    title: '#1a1a2e',
+    subtitle: '#22c55e',
+    cardTitle: '#ffffff',
+    cardText: '#a0a3b1',
+    badge: '#22c55e',
+    badgeText: '#ffffff',
+    date: '#6b7280',
+    dateIcon: '#22c55e'
   },
   dark: {
-    background: '#1a1b27',
-    border: '#38395b',
-    title: '#70a5fd',
-    text: '#a9b1d6',
-    label: '#8b949e',
-    value: '#c9d1d9',
-    repoName: '#70a5fd',
-    icon: '#8b949e',
-    prCount: '#3fb950'
-  },
-  nord: {
-    background: '#2e3440',
-    border: '#4c566a',
-    title: '#88c0d0',
-    text: '#eceff4',
-    label: '#d8dee9',
-    value: '#eceff4',
-    repoName: '#88c0d0',
-    icon: '#d8dee9',
-    prCount: '#a3be8c'
-  },
-  dracula: {
-    background: '#282a36',
-    border: '#6272a4',
-    title: '#ff79c6',
-    text: '#f8f8f2',
-    label: '#6272a4',
-    value: '#f8f8f2',
-    repoName: '#8be9fd',
-    icon: '#6272a4',
-    prCount: '#50fa7b'
-  },
-  tokyo: {
-    background: '#1a1b26',
-    border: '#414868',
-    title: '#7aa2f7',
-    text: '#c0caf5',
-    label: '#565f89',
-    value: '#c0caf5',
-    repoName: '#7aa2f7',
-    icon: '#565f89',
-    prCount: '#9ece6a'
+    bgGradient: ['#1a1b26', '#24283b'],
+    cardBg: '#2d3348',
+    cardBorder: '#414868',
+    title: '#c0caf5',
+    subtitle: '#9ece6a',
+    cardTitle: '#c0caf5',
+    cardText: '#565f89',
+    badge: '#9ece6a',
+    badgeText: '#1a1b26',
+    date: '#565f89',
+    dateIcon: '#9ece6a'
   }
 };
 
-// 아이콘 paths
 const icons = {
-  pr: `<path fill-rule="evenodd" d="M7.177 3.073L9.573.677A.25.25 0 0110 .854v4.792a.25.25 0 01-.427.177L7.177 3.427a.25.25 0 010-.354zM3.75 2.5a.75.75 0 100 1.5.75.75 0 000-1.5zm-2.25.75a2.25 2.25 0 113 2.122v5.256a2.251 2.251 0 11-1.5 0V5.372A2.25 2.25 0 011.5 3.25zM11 2.5h-1V4h1a1 1 0 011 1v5.628a2.251 2.251 0 101.5 0V5A2.5 2.5 0 0011 2.5zm1 10.25a.75.75 0 111.5 0 .75.75 0 01-1.5 0zM3.75 12a.75.75 0 100 1.5.75.75 0 000-1.5z"/>`,
-  repo: `<path fill-rule="evenodd" d="M2 2.5A2.5 2.5 0 014.5 0h8.75a.75.75 0 01.75.75v12.5a.75.75 0 01-.75.75h-2.5a.75.75 0 110-1.5h1.75v-2h-8a1 1 0 00-.714 1.7.75.75 0 01-1.072 1.05A2.495 2.495 0 012 11.5v-9zm10.5-1V9h-8c-.356 0-.694.074-1 .208V2.5a1 1 0 011-1h8zM5 12.25v3.25a.25.25 0 00.4.2l1.45-1.087a.25.25 0 01.3 0L8.6 15.7a.25.25 0 00.4-.2v-3.25a.25.25 0 00-.25-.25h-3.5a.25.25 0 00-.25.25z"/>`,
-  merged: `<path fill-rule="evenodd" d="M5 3.254V3.25a.75.75 0 01.75-.75h.5a.75.75 0 010 1.5h-.5A.75.75 0 015 3.25zm2.45 1.217a.75.75 0 010 1.06l-1.97 1.97a.75.75 0 01-1.06-1.06l1.97-1.97a.75.75 0 011.06 0zm1.06 1.06a.75.75 0 011.06 0l3.97 3.97a.75.75 0 11-1.06 1.06l-3.97-3.97a.75.75 0 010-1.06z"/>`
+  check: `<path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd"/>`,
+  github: `<path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/>`,
+  home: `<path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/>`
 };
 
 function escapeXml(str) {
@@ -76,99 +46,135 @@ function escapeXml(str) {
     .replace(/'/g, '&apos;');
 }
 
+function truncate(str, len) {
+  if (!str) return '';
+  return str.length > len ? str.substring(0, len) + '...' : str;
+}
+
+function formatDate(dateStr) {
+  if (!dateStr) return '';
+  const date = new Date(dateStr);
+  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  return `${months[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`;
+}
+
 /**
- * SVG 카드 생성 - github-readme-stats 스타일
+ * SVG 카드 생성 - 카드 그리드 스타일
  */
 export function generateSVG(data, options = {}) {
   const {
     theme = 'light',
-    maxRepos = 6,
-    width = 350
+    maxRepos = 4,
+    width = 480
   } = options;
 
   const colors = themes[theme] || themes.light;
-  const repos = data.contributions.slice(0, maxRepos);
 
-  const paddingX = 25;
-  const paddingY = 25;
-  const lineHeight = 25;
-  const titleHeight = 20;
-  const gapAfterTitle = 15;
-  const statsLines = 2;
-  const gapAfterStats = 12;
+  // PR 단위로 펼치기 (레포별이 아닌 PR별로)
+  const allPRs = [];
+  for (const repo of data.contributions) {
+    for (const pr of repo.prs) {
+      allPRs.push({
+        repoName: repo.name,
+        ...pr
+      });
+    }
+  }
+  const prs = allPRs.slice(0, maxRepos);
 
-  // 콘텐츠 높이 계산
-  const contentHeight = titleHeight + gapAfterTitle + (statsLines * lineHeight) + gapAfterStats + (repos.length * lineHeight);
-  const totalHeight = contentHeight + (paddingY * 2);
+  // 그리드 설정
+  const cols = 2;
+  const rows = Math.ceil(prs.length / cols);
+  const cardWidth = 200;
+  const cardHeight = 100;
+  const cardGap = 16;
+  const padding = 30;
 
-  // 내부 레이아웃 Y 좌표
-  const titleY = 14;
-  const statsY = titleHeight + gapAfterTitle;
-  const reposY = statsY + (statsLines * lineHeight) + gapAfterStats;
+  // 헤더 높이
+  const headerHeight = 80;
 
-  // 통계 라인
-  const statsSection = `
-    <g transform="translate(0, ${statsY})">
-      <!-- PRs Merged -->
-      <g>
-        <svg width="14" height="14" viewBox="0 0 16 16" fill="${colors.icon}">${icons.pr}</svg>
-        <text x="22" y="11" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" fill="${colors.label}">
-          PRs Merged:
-        </text>
-        <text x="${width - paddingX * 2}" y="11" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="${colors.value}" text-anchor="end">
-          ${data.totalPRs}
-        </text>
-      </g>
+  // 전체 높이 계산
+  const gridHeight = rows * cardHeight + (rows - 1) * cardGap;
+  const totalHeight = headerHeight + gridHeight + padding * 2;
 
-      <!-- Repositories -->
-      <g transform="translate(0, ${lineHeight})">
-        <svg width="14" height="14" viewBox="0 0 16 16" fill="${colors.icon}">${icons.repo}</svg>
-        <text x="22" y="11" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" fill="${colors.label}">
-          Repositories:
-        </text>
-        <text x="${width - paddingX * 2}" y="11" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="${colors.value}" text-anchor="end">
-          ${data.totalRepos}
+  // 그라데이션 배경
+  const background = `
+    <defs>
+      <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" style="stop-color:${colors.bgGradient[0]}"/>
+        <stop offset="100%" style="stop-color:${colors.bgGradient[1]}"/>
+      </linearGradient>
+    </defs>
+    <rect width="${width}" height="${totalHeight}" fill="url(#bgGrad)" rx="16"/>
+  `;
+
+  // 헤더
+  const header = `
+    <g transform="translate(${padding}, ${padding})">
+      <text font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="22" font-weight="700" fill="${colors.title}">
+        Open-Source Contributions
+      </text>
+      <g transform="translate(0, 35)">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="${colors.subtitle}">${icons.check}</svg>
+        <text x="26" y="15" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="600" fill="${colors.subtitle}">
+          ${data.totalPRs} PR${data.totalPRs > 1 ? 's' : ''} Merged!
         </text>
       </g>
     </g>
   `;
 
-  // 레포 목록
-  const repoLines = repos.map((repo, index) => {
-    const y = index * lineHeight;
+  // 카드 생성
+  const cards = prs.map((pr, index) => {
+    const col = index % cols;
+    const row = Math.floor(index / cols);
+    const x = padding + col * (cardWidth + cardGap);
+    const y = headerHeight + padding + row * (cardHeight + cardGap);
+
     return `
-      <g transform="translate(0, ${y})">
-        <circle cx="6" cy="6" r="4" fill="${colors.prCount}" opacity="0.8"/>
-        <text x="18" y="10" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" fill="${colors.repoName}">
-          ${escapeXml(repo.name)}
+      <g transform="translate(${x}, ${y})">
+        <!-- Card Background -->
+        <rect width="${cardWidth}" height="${cardHeight}" rx="12" fill="${colors.cardBg}"/>
+
+        <!-- GitHub Icon -->
+        <g transform="translate(14, 14)">
+          <circle cx="14" cy="14" r="14" fill="#2d3348"/>
+          <svg x="6" y="6" width="16" height="16" viewBox="0 0 16 16" fill="#ffffff">${icons.github}</svg>
+        </g>
+
+        <!-- Repo Name -->
+        <text x="50" y="22" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="${colors.cardTitle}">
+          ${escapeXml(truncate(pr.repoName, 18))}
         </text>
-        <text x="${width - paddingX * 2}" y="10" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" fill="${colors.prCount}" text-anchor="end" font-weight="600">
-          ${repo.prs.length} PR${repo.prs.length > 1 ? 's' : ''}
+
+        <!-- PR Title -->
+        <text x="50" y="38" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" fill="${colors.cardText}">
+          ${escapeXml(truncate(pr.title, 22))}
         </text>
+
+        <!-- Merged Badge -->
+        <g transform="translate(14, 55)">
+          <rect width="58" height="18" rx="4" fill="${colors.badge}"/>
+          <text x="29" y="13" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="${colors.badgeText}" text-anchor="middle">
+            ✓ Merged
+          </text>
+        </g>
+
+        <!-- Date -->
+        <g transform="translate(14, 78)">
+          <svg width="12" height="12" viewBox="0 0 20 20" fill="${colors.dateIcon}">${icons.home}</svg>
+          <text x="16" y="10" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="9" fill="${colors.date}">
+            Merged on ${formatDate(pr.mergedAt)}
+          </text>
+        </g>
       </g>
     `;
   }).join('');
 
-  const repoSection = `
-    <g transform="translate(0, ${reposY})">
-      ${repoLines}
-    </g>
-  `;
-
   return `
 <svg width="${width}" height="${totalHeight}" viewBox="0 0 ${width} ${totalHeight}" xmlns="http://www.w3.org/2000/svg">
-  <rect width="${width}" height="${totalHeight}" fill="${colors.background}" rx="6" stroke="${colors.border}" stroke-width="1"/>
-
-  <!-- Content (vertically centered) -->
-  <g transform="translate(${paddingX}, ${paddingY})">
-    <!-- Title -->
-    <text y="${titleY}" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="600" fill="${colors.title}">
-      ${escapeXml(data.username)}'s OSS Contributions
-    </text>
-
-    ${statsSection}
-    ${repoSection}
-  </g>
+  ${background}
+  ${header}
+  ${cards}
 </svg>
   `.trim();
 }
@@ -177,17 +183,23 @@ export function generateSVG(data, options = {}) {
  * 기여가 없을 때의 SVG
  */
 export function generateEmptySVG(username, options = {}) {
-  const { theme = 'light', width = 350 } = options;
+  const { theme = 'light', width = 480 } = options;
   const colors = themes[theme] || themes.light;
 
   return `
-<svg width="${width}" height="100" viewBox="0 0 ${width} 100" xmlns="http://www.w3.org/2000/svg">
-  <rect width="${width}" height="100" fill="${colors.background}" rx="6" stroke="${colors.border}" stroke-width="1"/>
-  <text x="20" y="30" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="600" fill="${colors.title}">
-    ${escapeXml(username)}'s OSS Contributions
+<svg width="${width}" height="150" viewBox="0 0 ${width} 150" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:${colors.bgGradient[0]}"/>
+      <stop offset="100%" style="stop-color:${colors.bgGradient[1]}"/>
+    </linearGradient>
+  </defs>
+  <rect width="${width}" height="150" fill="url(#bgGrad)" rx="16"/>
+  <text x="30" y="45" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="22" font-weight="700" fill="${colors.title}">
+    Open-Source Contributions
   </text>
-  <text x="${width / 2}" y="65" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" fill="${colors.label}" text-anchor="middle">
-    No external contributions yet
+  <text x="${width / 2}" y="100" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" fill="${colors.cardText}" text-anchor="middle">
+    No contributions yet. Start contributing!
   </text>
 </svg>
   `.trim();
