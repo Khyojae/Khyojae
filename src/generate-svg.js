@@ -89,23 +89,33 @@ export function generateSVG(data, options = {}) {
   const colors = themes[theme] || themes.light;
   const repos = data.contributions.slice(0, maxRepos);
 
-  const padding = 20;
+  const paddingX = 25;
+  const paddingY = 25;
   const lineHeight = 25;
-  const headerHeight = 35;
-  const statsLines = 2; // PRs Merged, Repositories
-  const repoStartY = headerHeight + (statsLines * lineHeight) + 15;
-  const totalHeight = repoStartY + (repos.length * lineHeight) + padding;
+  const titleHeight = 20;
+  const gapAfterTitle = 15;
+  const statsLines = 2;
+  const gapAfterStats = 12;
+
+  // 콘텐츠 높이 계산
+  const contentHeight = titleHeight + gapAfterTitle + (statsLines * lineHeight) + gapAfterStats + (repos.length * lineHeight);
+  const totalHeight = contentHeight + (paddingY * 2);
+
+  // 내부 레이아웃 Y 좌표
+  const titleY = 14;
+  const statsY = titleHeight + gapAfterTitle;
+  const reposY = statsY + (statsLines * lineHeight) + gapAfterStats;
 
   // 통계 라인
   const statsSection = `
-    <g transform="translate(${padding}, ${headerHeight})">
+    <g transform="translate(0, ${statsY})">
       <!-- PRs Merged -->
-      <g transform="translate(0, 0)">
+      <g>
         <svg width="14" height="14" viewBox="0 0 16 16" fill="${colors.icon}">${icons.pr}</svg>
         <text x="22" y="11" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" fill="${colors.label}">
           PRs Merged:
         </text>
-        <text x="${width - padding * 2}" y="11" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="${colors.value}" text-anchor="end">
+        <text x="${width - paddingX * 2}" y="11" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="${colors.value}" text-anchor="end">
           ${data.totalPRs}
         </text>
       </g>
@@ -116,14 +126,14 @@ export function generateSVG(data, options = {}) {
         <text x="22" y="11" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" fill="${colors.label}">
           Repositories:
         </text>
-        <text x="${width - padding * 2}" y="11" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="${colors.value}" text-anchor="end">
+        <text x="${width - paddingX * 2}" y="11" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="${colors.value}" text-anchor="end">
           ${data.totalRepos}
         </text>
       </g>
     </g>
   `;
 
-  // 레포 목록 (간단한 한 줄씩)
+  // 레포 목록
   const repoLines = repos.map((repo, index) => {
     const y = index * lineHeight;
     return `
@@ -132,7 +142,7 @@ export function generateSVG(data, options = {}) {
         <text x="18" y="10" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" fill="${colors.repoName}">
           ${escapeXml(repo.name)}
         </text>
-        <text x="${width - padding * 2}" y="10" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" fill="${colors.prCount}" text-anchor="end" font-weight="600">
+        <text x="${width - paddingX * 2}" y="10" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" fill="${colors.prCount}" text-anchor="end" font-weight="600">
           ${repo.prs.length} PR${repo.prs.length > 1 ? 's' : ''}
         </text>
       </g>
@@ -140,31 +150,25 @@ export function generateSVG(data, options = {}) {
   }).join('');
 
   const repoSection = `
-    <g transform="translate(${padding}, ${repoStartY})">
+    <g transform="translate(0, ${reposY})">
       ${repoLines}
     </g>
   `;
-
-  // 더 많은 레포가 있을 때
-  const moreCount = data.contributions.length - maxRepos;
-  const footer = moreCount > 0 ? `
-    <text x="${width / 2}" y="${totalHeight - 8}" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" fill="${colors.label}" text-anchor="middle">
-      +${moreCount} more
-    </text>
-  ` : '';
 
   return `
 <svg width="${width}" height="${totalHeight}" viewBox="0 0 ${width} ${totalHeight}" xmlns="http://www.w3.org/2000/svg">
   <rect width="${width}" height="${totalHeight}" fill="${colors.background}" rx="6" stroke="${colors.border}" stroke-width="1"/>
 
-  <!-- Title -->
-  <text x="${padding}" y="${padding + 5}" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="600" fill="${colors.title}">
-    ${escapeXml(data.username)}'s OSS Contributions
-  </text>
+  <!-- Content (vertically centered) -->
+  <g transform="translate(${paddingX}, ${paddingY})">
+    <!-- Title -->
+    <text y="${titleY}" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="600" fill="${colors.title}">
+      ${escapeXml(data.username)}'s OSS Contributions
+    </text>
 
-  ${statsSection}
-  ${repoSection}
-  ${footer}
+    ${statsSection}
+    ${repoSection}
+  </g>
 </svg>
   `.trim();
 }
