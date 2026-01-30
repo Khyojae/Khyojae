@@ -14,7 +14,8 @@ const themes = {
     badge: '#22c55e',
     badgeText: '#ffffff',
     date: '#6b7280',
-    dateIcon: '#22c55e'
+    dateIcon: '#22c55e',
+    credit: '#9ca3af'
   },
   dark: {
     bgGradient: ['#1a1b26', '#24283b'],
@@ -27,7 +28,8 @@ const themes = {
     badge: '#9ece6a',
     badgeText: '#1a1b26',
     date: '#565f89',
-    dateIcon: '#9ece6a'
+    dateIcon: '#9ece6a',
+    credit: '#565f89'
   }
 };
 
@@ -95,7 +97,8 @@ export function generateSVG(data, options = {}) {
 
   // 전체 높이 계산
   const gridHeight = rows * cardHeight + (rows - 1) * cardGap;
-  const totalHeight = headerHeight + gridHeight + padding * 2;
+  const creditHeight = 20;
+  const totalHeight = headerHeight + gridHeight + padding * 2 + creditHeight;
 
   // 그라데이션 배경
   const background = `
@@ -170,11 +173,19 @@ export function generateSVG(data, options = {}) {
     `;
   }).join('');
 
+  // 크레딧
+  const credit = `
+    <text x="${width - padding}" y="${totalHeight - 10}" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="9" fill="${colors.credit}" text-anchor="end" opacity="0.7">
+      github.com/dbwls99706/oss-contribution-card
+    </text>
+  `;
+
   return `
 <svg width="${width}" height="${totalHeight}" viewBox="0 0 ${width} ${totalHeight}" xmlns="http://www.w3.org/2000/svg">
   ${background}
   ${header}
   ${cards}
+  ${credit}
 </svg>
   `.trim();
 }

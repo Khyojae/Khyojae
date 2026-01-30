@@ -103,11 +103,7 @@ THEME=dark node src/index.js <username>
 
 ## Credit
 
-이 프로젝트가 도움이 되셨다면, 프로필 README에 크레딧을 남겨주세요:
-
-```markdown
-Powered by [oss-contribution-card](https://github.com/dbwls99706/oss-contribution-card)
-```
+SVG 하단에 자동으로 크레딧이 표시됩니다.
 
 ## License
 
