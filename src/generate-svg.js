@@ -117,7 +117,7 @@ export function generateSVG(data, options = {}) {
       <g transform="translate(0, 35)">
         <svg width="20" height="20" viewBox="0 0 20 20" fill="${colors.subtitle}">${icons.check}</svg>
         <text x="26" y="15" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="600" fill="${colors.subtitle}">
-          ${data.totalPRs} PR${data.totalPRs > 1 ? 's' : ''} Merged!
+          ${data.totalPRs} PR${data.totalPRs > 1 ? 's' : ''} Merged
         </text>
       </g>
     </g>
