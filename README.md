@@ -17,7 +17,10 @@ GitHub 프로필 README에 **외부 레포지토리 기여 내역**을 자동으
 - **외부 기여만 표시** - 자기 레포 제외, 다른 프로젝트에 merge된 PR만
 - **자동 업데이트** - GitHub Actions로 매일 자동 갱신
 - **5가지 테마** - light, dark, nord, dracula, tokyo
-- **컴팩트 디자인** - github-readme-stats 스타일
+- **PR 번호 표시** - 각 카드에 PR 번호(#123) 표시
+- **정렬 옵션** - 날짜순 또는 PR 수 기준 정렬
+- **날짜 필터** - 최근 N개월 기여만 표시 가능
+- **애니메이션** - 카드 페이드인 효과
 
 ## 사용 방법
 
@@ -62,15 +65,25 @@ your-username/
 
 ## 설정 옵션
 
-### 테마 변경
-
-레포지토리 **Settings → Secrets and variables → Actions → Variables**에서:
+레포지토리 **Settings → Secrets and variables → Actions → Variables**에서 설정:
 
 | Variable | Description | Options | Default |
 |----------|-------------|---------|---------|
 | `THEME` | 테마 선택 | `light`, `dark`, `nord`, `dracula`, `tokyo` | `light` |
-| `MAX_REPOS` | 표시할 최대 레포 수 | 1-10 | `6` |
+| `MAX_REPOS` | 표시할 최대 PR 수 | 1-10 | `6` |
 | `TITLE` | 커스텀 타이틀 | 문자열 | `Open-Source Contributions` |
+| `SORT_BY` | 정렬 기준 | `date` (최신순), `count` (PR 많은 순) | `date` |
+| `MONTHS_AGO` | 최근 N개월 필터 | 숫자 (예: `6`) | 전체 |
+
+### 예시: 다크 테마 + 최근 6개월만 표시
+
+```yaml
+env:
+  THEME: dark
+  MAX_REPOS: 4
+  SORT_BY: date
+  MONTHS_AGO: 6
+```
 
 ### 로컬 실행
 
@@ -78,9 +91,25 @@ your-username/
 # 기본 실행
 node src/index.js <username>
 
-# 테마 지정
-THEME=dark node src/index.js <username>
+# 테마 + 정렬 옵션
+THEME=dark SORT_BY=count node src/index.js <username>
+
+# 최근 6개월만
+MONTHS_AGO=6 node src/index.js <username>
+
+# Mock 데이터로 테스트
+node src/index.js <username> --mock
 ```
+
+## 테마 미리보기
+
+| Theme | Preview |
+|-------|---------|
+| `light` | 밝은 배경 + 초록 액센트 |
+| `dark` | 어두운 배경 + 연두 액센트 |
+| `nord` | Nord 팔레트 |
+| `dracula` | Dracula 팔레트 |
+| `tokyo` | Tokyo Night 팔레트 |
 
 ## 동작 원리
 
@@ -93,18 +122,19 @@ THEME=dark node src/index.js <username>
 │     → author:{username} type:pr is:merged -user:{user}  │
 │     → 자기 레포 제외, merged PR만                        │
 │                                                         │
-│  2. 레포별로 그룹화 & PR 수 기준 정렬                    │
+│  2. 레포별로 그룹화 & 정렬                              │
 │                                                         │
-│  3. SVG 카드 생성                                        │
+│  3. SVG 카드 생성 (PR 번호, 애니메이션 포함)            │
 │                                                         │
 │  4. contributions.svg 커밋 & 푸시                        │
 │                                                         │
 └─────────────────────────────────────────────────────────┘
 ```
 
-## Credit
+## 제한 사항
 
-SVG 하단에 자동으로 크레딧이 표시됩니다.
+- GitHub README에서 SVG 내부 링크는 보안상 비활성화됨
+- PR 번호는 표시되며, 사용자가 직접 검색 가능
 
 ## License
 

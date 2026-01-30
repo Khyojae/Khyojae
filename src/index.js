@@ -57,6 +57,8 @@ async function main() {
   const maxRepos = parseInt(process.env.MAX_REPOS || '6', 10);
   const outputPath = process.env.OUTPUT_PATH || './contributions.svg';
   const title = process.env.TITLE || 'Open-Source Contributions';
+  const sortBy = process.env.SORT_BY || 'date'; // 'date' or 'count'
+  const monthsAgo = process.env.MONTHS_AGO ? parseInt(process.env.MONTHS_AGO, 10) : null;
   const useMock = process.env.USE_MOCK === 'true' || process.argv.includes('--mock');
 
   if (!username) {
@@ -67,7 +69,10 @@ async function main() {
   }
 
   console.log(`Fetching contributions for: ${username}`);
-  console.log(`Theme: ${theme}, Max repos: ${maxRepos}`);
+  console.log(`Theme: ${theme}, Max repos: ${maxRepos}, Sort: ${sortBy}`);
+  if (monthsAgo) {
+    console.log(`Filtering: Last ${monthsAgo} months only`);
+  }
 
   try {
     const data = useMock ? getMockData(username) : await fetchContributions(username, token);
@@ -83,7 +88,7 @@ async function main() {
 
     // SVG 생성
     const svg = data.totalRepos > 0
-      ? generateSVG(data, { theme, maxRepos, title })
+      ? generateSVG(data, { theme, maxRepos, title, sortBy, monthsAgo })
       : generateEmptySVG(username, { theme, title });
 
     // 출력 디렉토리 생성 (필요시)
