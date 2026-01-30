@@ -1,0 +1,98 @@
+#!/usr/bin/env node
+
+import { fetchContributions } from './fetch-contributions.js';
+import { generateSVG, generateEmptySVG } from './generate-svg.js';
+import { writeFileSync, existsSync, mkdirSync } from 'fs';
+import { dirname, join } from 'path';
+import { fileURLToPath } from 'url';
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+
+// 테스트/데모용 mock 데이터
+function getMockData(username) {
+  return {
+    username,
+    totalPRs: 2,
+    totalRepos: 2,
+    contributions: [
+      {
+        name: 'ros2/rclpy',
+        prs: [
+          {
+            number: 947,
+            title: 'Fix: deadlock when calling rclpy.shutdown() from callbacks',
+            url: 'https://github.com/ros2/rclpy/pull/947',
+            mergedAt: '2025-10-02T17:37:26Z'
+          }
+        ],
+        latestMerge: '2025-10-02T17:37:26Z'
+      },
+      {
+        name: 'ros2/rosbag2',
+        prs: [
+          {
+            number: 123,
+            title: 'Fix: Add null pointer check for reader_imp in the Reader constructor',
+            url: 'https://github.com/ros2/rosbag2/pull/123',
+            mergedAt: '2025-08-14T11:10:31Z'
+          }
+        ],
+        latestMerge: '2025-08-14T11:10:31Z'
+      }
+    ]
+  };
+}
+
+async function main() {
+  // 환경변수 또는 인자에서 설정 가져오기
+  const username = process.env.GITHUB_USERNAME || process.argv[2];
+  const token = process.env.GITHUB_TOKEN || null;
+  const theme = process.env.THEME || 'light';
+  const maxRepos = parseInt(process.env.MAX_REPOS || '6', 10);
+  const outputPath = process.env.OUTPUT_PATH || './contributions.svg';
+  const useMock = process.env.USE_MOCK === 'true' || process.argv.includes('--mock');
+
+  if (!username) {
+    console.error('Error: GitHub username is required.');
+    console.error('Usage: GITHUB_USERNAME=<username> npm run generate');
+    console.error('   or: node src/index.js <username>');
+    process.exit(1);
+  }
+
+  console.log(`Fetching contributions for: ${username}`);
+  console.log(`Theme: ${theme}, Max repos: ${maxRepos}`);
+
+  try {
+    const data = useMock ? getMockData(username) : await fetchContributions(username, token);
+
+    console.log(`Found ${data.totalPRs} merged PRs in ${data.totalRepos} external repositories`);
+
+    if (data.contributions.length > 0) {
+      console.log('\nTop contributions:');
+      data.contributions.slice(0, 5).forEach(repo => {
+        console.log(`  - ${repo.name}: ${repo.prs.length} PR(s)`);
+      });
+    }
+
+    // SVG 생성
+    const svg = data.totalRepos > 0
+      ? generateSVG(data, { theme, maxRepos })
+      : generateEmptySVG(username, { theme });
+
+    // 출력 디렉토리 생성 (필요시)
+    const outputDir = dirname(outputPath);
+    if (outputDir && outputDir !== '.' && !existsSync(outputDir)) {
+      mkdirSync(outputDir, { recursive: true });
+    }
+
+    // 파일 저장
+    writeFileSync(outputPath, svg);
+    console.log(`\nSVG saved to: ${outputPath}`);
+
+  } catch (error) {
+    console.error('Error:', error.message);
+    process.exit(1);
+  }
+}
+
+main();
