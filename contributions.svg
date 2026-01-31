@@ -57,7 +57,7 @@
           ros2/rclpy
         </text>
         <text x="50" y="38" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" font-weight="500" fill="#60a5fa">
-          #947
+          #1492
         </text>
 
         <!-- PR Title -->
@@ -97,7 +97,7 @@
           ros2/rosbag2
         </text>
         <text x="50" y="38" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" font-weight="500" fill="#60a5fa">
-          #123
+          #2135
         </text>
 
         <!-- PR Title -->
