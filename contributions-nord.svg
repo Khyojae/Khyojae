@@ -23,7 +23,7 @@
     <rect width="480" height="189" fill="url(#bgGrad)" rx="16"/>
   
   
-    <g transform="translate(18, 18)">
+    <g transform="translate(18, 23)">
       <text font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#eceff4">
         Open-Source Contributions
       </text>
@@ -51,7 +51,7 @@
           ros2/rclpy
         </text>
         <text x="50" y="38" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" font-weight="500" fill="#88c0d0">
-          #947
+          #1492
         </text>
 
         <!-- PR Title -->
@@ -71,7 +71,7 @@
         <g transform="translate(80, 70)">
           <svg width="12" height="12" viewBox="0 0 20 20" fill="#a3be8c"><path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/></svg>
           <text x="16" y="10" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="9" fill="#d8dee9">
-            Oct 2, 2025
+            Oct 3, 2025
           </text>
         </g>
       </g>
@@ -91,7 +91,7 @@
           ros2/rosbag2
         </text>
         <text x="50" y="38" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" font-weight="500" fill="#88c0d0">
-          #123
+          #2135
         </text>
 
         <!-- PR Title -->
