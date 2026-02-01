@@ -37,9 +37,9 @@ function getMockData(username) {
         name: 'ros2/rosbag2',
         prs: [
           {
-            number: 123,
+            number: 2135,
             title: 'Fix: Add null pointer check for reader_imp in the Reader constructor',
-            url: 'https://github.com/ros2/rosbag2/pull/123',
+            url: 'https://github.com/ros2/rosbag2/pull/2135',
             mergedAt: '2025-08-14T11:10:31Z'
           }
         ],
