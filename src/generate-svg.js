@@ -172,13 +172,13 @@ export function generateSVG(data, options = {}) {
   // 그리드 설정
   const cols = 2;
   const rows = Math.ceil(prs.length / cols);
-  const cardWidth = 200;
-  const cardHeight = 100;
-  const cardGap = 16;
-  const padding = 30;
+  const cardWidth = 205;
+  const cardHeight = 95;
+  const cardGap = 12;
+  const padding = 18;
 
   // 헤더 높이
-  const headerHeight = 80;
+  const headerHeight = 58;
 
   // 전체 높이 계산
   const gridHeight = rows * cardHeight + (rows - 1) * cardGap;
@@ -213,12 +213,12 @@ export function generateSVG(data, options = {}) {
   // 헤더
   const header = `
     <g transform="translate(${padding}, ${padding})">
-      <text font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="22" font-weight="700" fill="${colors.title}">
+      <text font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="${colors.title}">
         ${escapeXml(title)}
       </text>
-      <g transform="translate(0, 35)">
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="${colors.subtitle}">${icons.check}</svg>
-        <text x="26" y="15" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="600" fill="${colors.subtitle}">
+      <g transform="translate(0, 26)">
+        <svg width="16" height="16" viewBox="0 0 20 20" fill="${colors.subtitle}">${icons.check}</svg>
+        <text x="20" y="12" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="${colors.subtitle}">
           ${data.totalPRs} PR${data.totalPRs !== 1 ? 's' : ''} Merged
         </text>
       </g>
