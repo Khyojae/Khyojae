@@ -34,6 +34,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           THEME: ${{ vars.THEME || 'light' }}
           MAX_REPOS: ${{ vars.MAX_REPOS || '6' }}
+          TITLE: ${{ vars.TITLE || 'Open-Source Contributions' }}
+          SORT_BY: ${{ vars.SORT_BY || 'date' }}
+          MONTHS_AGO: ${{ vars.MONTHS_AGO || '' }}
           OUTPUT_PATH: './contributions.svg'
         run: node src/index.js
 
