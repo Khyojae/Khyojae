@@ -1,18 +1,12 @@
 <svg width="480" height="240" viewBox="0 0 480 240" xmlns="http://www.w3.org/2000/svg">
   
     <style>
-      @keyframes fadeInUp {
-        from {
-          opacity: 0;
-          transform: translateY(10px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
+      @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
       }
       .card {
-        animation: fadeInUp 0.5s ease-out forwards;
+        animation: fadeIn 0.4s ease-out forwards;
         opacity: 0;
       }
       .card-0 { animation-delay: 0s; }

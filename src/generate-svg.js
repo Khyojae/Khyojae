@@ -184,21 +184,15 @@ export function generateSVG(data, options = {}) {
   const gridHeight = rows * cardHeight + (rows - 1) * cardGap;
   const totalHeight = headerHeight + gridHeight + padding * 2;
 
-  // 애니메이션 스타일
+  // 애니메이션 스타일 (opacity만 사용, transform 충돌 방지)
   const styles = `
     <style>
-      @keyframes fadeInUp {
-        from {
-          opacity: 0;
-          transform: translateY(10px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
+      @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
       }
       .card {
-        animation: fadeInUp 0.5s ease-out forwards;
+        animation: fadeIn 0.4s ease-out forwards;
         opacity: 0;
       }
       ${prs.map((_, i) => `.card-${i} { animation-delay: ${i * 0.1}s; }`).join('\n      ')}
