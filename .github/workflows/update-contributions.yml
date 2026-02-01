@@ -6,11 +6,14 @@ on:
     - cron: '0 0 * * *'
   # 수동 실행 지원
   workflow_dispatch:
-  # Push 시에도 실행 (초기 설정용)
+  # main/master 브랜치 push 시 실행
   push:
     branches:
       - main
       - master
+    paths:
+      - 'src/**'
+      - '.github/workflows/update-contributions.yml'
 
 jobs:
   update-svg:
@@ -29,9 +32,9 @@ jobs:
 
       - name: Generate contributions SVG
         env:
-          # 레포지토리 이름에서 유저네임 추출 (username/username 형식)
           GITHUB_USERNAME: ${{ github.repository_owner }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # 설정 옵션 (Settings > Secrets and variables > Actions > Variables에서 설정)
           THEME: ${{ vars.THEME || 'light' }}
           MAX_REPOS: ${{ vars.MAX_REPOS || '6' }}
           TITLE: ${{ vars.TITLE || 'Open-Source Contributions' }}

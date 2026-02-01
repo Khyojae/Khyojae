@@ -1,12 +1,12 @@
 {
-  "name": "github-contribution-widget",
+  "name": "oss-contribution-card",
   "version": "1.0.0",
-  "description": "GitHub 프로필 README에 외부 레포 기여 내역을 SVG 카드로 표시",
+  "description": "Display your open-source contributions on GitHub profile README",
   "type": "module",
   "main": "src/index.js",
   "scripts": {
     "generate": "node src/index.js",
-    "test": "node src/index.js --test"
+    "test": "node src/index.js --mock"
   },
   "keywords": [
     "github",
@@ -14,8 +14,20 @@
     "profile",
     "readme",
     "svg",
-    "widget"
+    "widget",
+    "open-source",
+    "pull-request"
   ],
-  "author": "",
-  "license": "MIT"
+  "author": "dbwls99706",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dbwls99706/oss-contribution-card"
+  },
+  "bugs": {
+    "url": "https://github.com/dbwls99706/oss-contribution-card/issues"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
 }
