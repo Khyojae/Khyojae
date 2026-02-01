@@ -17,6 +17,7 @@ GitHub 프로필 README에 **외부 오픈소스 기여 내역**을 자동으로
 - **외부 기여만 표시** - 자신의 레포 제외, 다른 프로젝트에 merge된 PR만
 - **자동 업데이트** - GitHub Actions로 매일 자동 갱신
 - **5가지 테마** - `light`, `dark`, `nord`, `dracula`, `tokyo`
+- **자동 테마 감지** - GitHub 라이트/다크 모드에 따라 자동 색상 전환
 - **PR 번호 표시** - 각 카드에 PR 번호 표시 (예: #1492)
 - **정렬 옵션** - 날짜순 또는 PR 수 기준 정렬
 - **날짜 필터** - 최근 N개월 기여만 표시 가능
@@ -77,6 +78,7 @@ your-username/
 | Variable | Description | Default |
 |----------|-------------|---------|
 | `THEME` | 테마 (`light`, `dark`, `nord`, `dracula`, `tokyo`) | `light` |
+| `AUTO_THEME` | GitHub 테마 자동 감지 (`true`/`false`) | `false` |
 | `MAX_REPOS` | 표시할 최대 PR 수 (1-10) | `6` |
 | `TITLE` | 커스텀 타이틀 | `Open-Source Contributions` |
 | `SORT_BY` | 정렬 기준 (`date`: 최신순, `count`: PR 많은 순) | `date` |
@@ -84,7 +86,17 @@ your-username/
 
 ### 설정 예시
 
-다크 테마 + 최근 6개월만 표시하려면:
+**자동 테마 감지 (권장):**
+
+GitHub 라이트/다크 모드에 따라 자동으로 색상이 전환됩니다:
+
+1. **Settings** → **Secrets and variables** → **Actions** → **Variables**
+2. **New repository variable** 클릭
+3. Name: `AUTO_THEME`, Value: `true`
+
+> 💡 `AUTO_THEME=true`를 사용하면 `THEME` 설정은 무시됩니다.
+
+**다크 테마 + 최근 6개월만 표시:**
 
 1. **Settings** → **Secrets and variables** → **Actions** → **Variables**
 2. **New repository variable** 클릭
@@ -118,6 +130,9 @@ node src/index.js <your-username>
 
 # 테마 변경
 THEME=dark node src/index.js <your-username>
+
+# 자동 테마 감지 (GitHub 라이트/다크 모드 자동 전환)
+AUTO_THEME=true node src/index.js <your-username>
 
 # 테스트 (Mock 데이터)
 node src/index.js <your-username> --mock
