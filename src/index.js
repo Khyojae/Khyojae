@@ -54,6 +54,7 @@ async function main() {
   const username = process.env.GITHUB_USERNAME || process.argv[2];
   const token = process.env.GITHUB_TOKEN || null;
   const theme = process.env.THEME || 'light';
+  const autoTheme = process.env.AUTO_THEME === 'true'; // GitHub 테마 자동 감지
   const maxRepos = parseInt(process.env.MAX_REPOS || '6', 10);
   const outputPath = process.env.OUTPUT_PATH || './contributions.svg';
   const title = process.env.TITLE || 'Open-Source Contributions';
@@ -69,7 +70,7 @@ async function main() {
   }
 
   console.log(`Fetching contributions for: ${username}`);
-  console.log(`Theme: ${theme}, Max repos: ${maxRepos}, Sort: ${sortBy}`);
+  console.log(`Theme: ${autoTheme ? 'auto (light/dark)' : theme}, Max repos: ${maxRepos}, Sort: ${sortBy}`);
   if (monthsAgo) {
     console.log(`Filtering: Last ${monthsAgo} months only`);
   }
@@ -88,8 +89,8 @@ async function main() {
 
     // SVG 생성
     const svg = data.totalRepos > 0
-      ? generateSVG(data, { theme, maxRepos, title, sortBy, monthsAgo })
-      : generateEmptySVG(username, { theme, title });
+      ? generateSVG(data, { theme, autoTheme, maxRepos, title, sortBy, monthsAgo })
+      : generateEmptySVG(username, { theme, autoTheme, title });
 
     // 출력 디렉토리 생성 (필요시)
     const outputDir = dirname(outputPath);

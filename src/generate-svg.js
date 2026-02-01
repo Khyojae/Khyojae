@@ -111,6 +111,7 @@ function formatDate(dateStr) {
  * @param {Object} data - 기여 데이터
  * @param {Object} options - 옵션
  * @param {string} options.theme - 테마 (light, dark, nord, dracula, tokyo)
+ * @param {boolean} options.autoTheme - GitHub 테마 자동 감지 (light/dark)
  * @param {number} options.maxRepos - 최대 표시 레포 수
  * @param {number} options.width - SVG 너비
  * @param {string} options.title - 커스텀 타이틀
@@ -120,6 +121,7 @@ function formatDate(dateStr) {
 export function generateSVG(data, options = {}) {
   const {
     theme = 'light',
+    autoTheme = false,
     maxRepos = 4,
     width = 480,
     title = 'Open-Source Contributions',
@@ -185,6 +187,47 @@ export function generateSVG(data, options = {}) {
   const totalHeight = headerHeight + gridHeight + padding * 2;
 
   // 애니메이션 스타일 (opacity만 사용, transform 충돌 방지)
+  const lightColors = themes.light;
+  const darkColors = themes.dark;
+
+  const autoThemeStyles = autoTheme ? `
+      /* Light mode (default) */
+      .bg-start { stop-color: ${lightColors.bgGradient[0]}; }
+      .bg-end { stop-color: ${lightColors.bgGradient[1]}; }
+      .card-bg { fill: ${lightColors.cardBg}; }
+      .icon-bg { fill: #2d3348; }
+      .icon-color { fill: #ffffff; }
+      .title-text { fill: ${lightColors.title}; }
+      .subtitle-text { fill: ${lightColors.subtitle}; }
+      .subtitle-icon { fill: ${lightColors.subtitle}; }
+      .card-title { fill: ${lightColors.cardTitle}; }
+      .pr-number { fill: ${lightColors.prNumber}; }
+      .card-text { fill: ${lightColors.cardText}; }
+      .badge-bg { fill: ${lightColors.badge}; }
+      .badge-text { fill: ${lightColors.badgeText}; }
+      .date-icon { fill: ${lightColors.dateIcon}; }
+      .date-text { fill: ${lightColors.date}; }
+
+      /* Dark mode */
+      @media (prefers-color-scheme: dark) {
+        .bg-start { stop-color: ${darkColors.bgGradient[0]}; }
+        .bg-end { stop-color: ${darkColors.bgGradient[1]}; }
+        .card-bg { fill: ${darkColors.cardBg}; }
+        .icon-bg { fill: ${darkColors.cardBg}; }
+        .icon-color { fill: #ffffff; }
+        .title-text { fill: ${darkColors.title}; }
+        .subtitle-text { fill: ${darkColors.subtitle}; }
+        .subtitle-icon { fill: ${darkColors.subtitle}; }
+        .card-title { fill: ${darkColors.cardTitle}; }
+        .pr-number { fill: ${darkColors.prNumber}; }
+        .card-text { fill: ${darkColors.cardText}; }
+        .badge-bg { fill: ${darkColors.badge}; }
+        .badge-text { fill: ${darkColors.badgeText}; }
+        .date-icon { fill: ${darkColors.dateIcon}; }
+        .date-text { fill: ${darkColors.date}; }
+      }
+  ` : '';
+
   const styles = `
     <style>
       @keyframes fadeIn {
@@ -196,11 +239,20 @@ export function generateSVG(data, options = {}) {
         opacity: 0;
       }
       ${prs.map((_, i) => `.card-${i} { animation-delay: ${i * 0.1}s; }`).join('\n      ')}
+      ${autoThemeStyles}
     </style>
   `;
 
   // 그라데이션 배경
-  const background = `
+  const background = autoTheme ? `
+    <defs>
+      <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" class="bg-start"/>
+        <stop offset="100%" class="bg-end"/>
+      </linearGradient>
+    </defs>
+    <rect width="${width}" height="${totalHeight}" fill="url(#bgGrad)" rx="16"/>
+  ` : `
     <defs>
       <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
         <stop offset="0%" style="stop-color:${colors.bgGradient[0]}"/>
@@ -211,7 +263,19 @@ export function generateSVG(data, options = {}) {
   `;
 
   // 헤더
-  const header = `
+  const header = autoTheme ? `
+    <g transform="translate(${padding}, ${padding + 5})">
+      <text class="title-text" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700">
+        ${escapeXml(title)}
+      </text>
+      <g transform="translate(0, 26)">
+        <svg class="subtitle-icon" width="16" height="16" viewBox="0 0 20 20">${icons.check}</svg>
+        <text class="subtitle-text" x="20" y="12" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" font-weight="600">
+          ${data.totalPRs} PR${data.totalPRs !== 1 ? 's' : ''} Merged
+        </text>
+      </g>
+    </g>
+  ` : `
     <g transform="translate(${padding}, ${padding + 5})">
       <text font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="${colors.title}">
         ${escapeXml(title)}
@@ -232,6 +296,50 @@ export function generateSVG(data, options = {}) {
     const x = padding + col * (cardWidth + cardGap);
     const y = headerHeight + padding + row * (cardHeight + cardGap);
     const prNumber = pr.number ? `#${pr.number}` : '';
+
+    if (autoTheme) {
+      return `
+      <g transform="translate(${x}, ${y})" class="card card-${index}">
+        <!-- Card Background -->
+        <rect class="card-bg" width="${cardWidth}" height="${cardHeight}" rx="12"/>
+
+        <!-- GitHub Icon -->
+        <g transform="translate(14, 14)">
+          <circle class="icon-bg" cx="14" cy="14" r="14"/>
+          <svg class="icon-color" x="6" y="6" width="16" height="16" viewBox="0 0 16 16">${icons.github}</svg>
+        </g>
+
+        <!-- Repo Name & PR Number -->
+        <text class="card-title" x="50" y="22" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" font-weight="600">
+          ${escapeXml(truncate(pr.repoName, 16))}
+        </text>
+        <text class="pr-number" x="50" y="38" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" font-weight="500">
+          ${escapeXml(prNumber)}
+        </text>
+
+        <!-- PR Title -->
+        <text class="card-text" x="50" y="52" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10">
+          ${escapeXml(truncate(pr.title, 22))}
+        </text>
+
+        <!-- Merged Badge -->
+        <g transform="translate(14, 70)">
+          <rect class="badge-bg" width="58" height="18" rx="4"/>
+          <text class="badge-text" x="29" y="13" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="600" text-anchor="middle">
+            Merged
+          </text>
+        </g>
+
+        <!-- Date -->
+        <g transform="translate(80, 70)">
+          <svg class="date-icon" width="12" height="12" viewBox="0 0 20 20">${icons.calendar}</svg>
+          <text class="date-text" x="16" y="10" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="9">
+            ${formatDate(pr.mergedAt)}
+          </text>
+        </g>
+      </g>
+    `;
+    }
 
     return `
       <g transform="translate(${x}, ${y})" class="card card-${index}">
@@ -290,8 +398,43 @@ export function generateSVG(data, options = {}) {
  * 기여가 없을 때의 SVG
  */
 export function generateEmptySVG(username, options = {}) {
-  const { theme = 'light', width = 480, title = 'Open-Source Contributions' } = options;
+  const { theme = 'light', autoTheme = false, width = 480, title = 'Open-Source Contributions' } = options;
   const colors = themes[theme] || themes.light;
+  const lightColors = themes.light;
+  const darkColors = themes.dark;
+
+  if (autoTheme) {
+    return `
+<svg width="${width}" height="150" viewBox="0 0 ${width} 150" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    .bg-start { stop-color: ${lightColors.bgGradient[0]}; }
+    .bg-end { stop-color: ${lightColors.bgGradient[1]}; }
+    .title-text { fill: ${lightColors.title}; }
+    .card-text { fill: ${lightColors.cardText}; }
+
+    @media (prefers-color-scheme: dark) {
+      .bg-start { stop-color: ${darkColors.bgGradient[0]}; }
+      .bg-end { stop-color: ${darkColors.bgGradient[1]}; }
+      .title-text { fill: ${darkColors.title}; }
+      .card-text { fill: ${darkColors.cardText}; }
+    }
+  </style>
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" class="bg-start"/>
+      <stop offset="100%" class="bg-end"/>
+    </linearGradient>
+  </defs>
+  <rect width="${width}" height="150" fill="url(#bgGrad)" rx="16"/>
+  <text class="title-text" x="30" y="45" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="22" font-weight="700">
+    ${escapeXml(title)}
+  </text>
+  <text class="card-text" x="${width / 2}" y="100" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" text-anchor="middle">
+    No contributions yet. Start contributing
+  </text>
+</svg>
+    `.trim();
+  }
 
   return `
 <svg width="${width}" height="150" viewBox="0 0 ${width} 150" xmlns="http://www.w3.org/2000/svg">
