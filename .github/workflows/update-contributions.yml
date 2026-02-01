@@ -1,9 +1,9 @@
 name: Update Contributions SVG
 
 on:
-  # 매일 UTC 00:00에 자동 실행 (한국시간 09:00)
+  # 하루 3번 자동 실행 (UTC 00:00, 08:00, 16:00 = 한국시간 09:00, 17:00, 01:00)
   schedule:
-    - cron: '0 0 * * *'
+    - cron: '0 0,8,16 * * *'
   # 수동 실행 지원
   workflow_dispatch:
   # main/master 브랜치 push 시 실행
