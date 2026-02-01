@@ -212,7 +212,7 @@ export function generateSVG(data, options = {}) {
 
   // 헤더
   const header = `
-    <g transform="translate(${padding}, ${padding})">
+    <g transform="translate(${padding}, ${padding + 5})">
       <text font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="${colors.title}">
         ${escapeXml(title)}
       </text>

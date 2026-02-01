@@ -25,13 +25,13 @@ function getMockData(username) {
         name: 'ros2/rclpy',
         prs: [
           {
-            number: 947,
+            number: 1492,
             title: 'Fix: deadlock when calling rclpy.shutdown() from callbacks',
-            url: 'https://github.com/ros2/rclpy/pull/947',
-            mergedAt: '2025-10-02T17:37:26Z'
+            url: 'https://github.com/ros2/rclpy/pull/1492',
+            mergedAt: '2025-10-03T17:37:26Z'
           }
         ],
-        latestMerge: '2025-10-02T17:37:26Z'
+        latestMerge: '2025-10-03T17:37:26Z'
       },
       {
         name: 'ros2/rosbag2',
