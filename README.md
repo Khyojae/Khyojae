@@ -1,4 +1,4 @@
-# OSS Contribution Card
+# OpenSource-Contribution-Card
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
@@ -122,8 +122,8 @@ GitHub 라이트/다크 모드에 따라 자동으로 색상이 전환됩니다:
 
 ```bash
 # 클론
-git clone https://github.com/dbwls99706/oss-contribution-card
-cd oss-contribution-card
+git clone https://github.com/dbwls99706/OpenSource-contribution-card
+cd OpenSource-contribution-card
 
 # 실행 (실제 GitHub API 사용)
 node src/index.js <your-username>
