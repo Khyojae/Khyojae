@@ -60,6 +60,8 @@ async function main() {
   const title = process.env.TITLE || 'Open-Source Contributions';
   const sortBy = process.env.SORT_BY || 'date'; // 'date' or 'count'
   const monthsAgo = process.env.MONTHS_AGO ? parseInt(process.env.MONTHS_AGO, 10) : null;
+  const excludeOrgs = process.env.EXCLUDE_ORGS ? process.env.EXCLUDE_ORGS.split(',').map(s => s.trim()).filter(Boolean) : [];
+  const includeOrgs = process.env.INCLUDE_ORGS ? process.env.INCLUDE_ORGS.split(',').map(s => s.trim()).filter(Boolean) : [];
   const useMock = process.env.USE_MOCK === 'true' || process.argv.includes('--mock');
 
   if (!username) {
@@ -74,9 +76,15 @@ async function main() {
   if (monthsAgo) {
     console.log(`Filtering: Last ${monthsAgo} months only`);
   }
+  if (excludeOrgs.length > 0) {
+    console.log(`Excluding orgs: ${excludeOrgs.join(', ')}`);
+  }
+  if (includeOrgs.length > 0) {
+    console.log(`Including only orgs: ${includeOrgs.join(', ')}`);
+  }
 
   try {
-    const data = useMock ? getMockData(username) : await fetchContributions(username, token);
+    const data = useMock ? getMockData(username) : await fetchContributions(username, token, { excludeOrgs, includeOrgs });
 
     console.log(`Found ${data.totalPRs} merged PRs in ${data.totalRepos} external repositories`);
 
