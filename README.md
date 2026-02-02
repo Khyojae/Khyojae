@@ -21,6 +21,7 @@ GitHub 프로필 README에 **외부 오픈소스 기여 내역**을 자동으로
 - **PR 번호 표시** - 각 카드에 PR 번호 표시 (예: #1492)
 - **정렬 옵션** - 날짜순 또는 PR 수 기준 정렬
 - **날짜 필터** - 최근 N개월 기여만 표시 가능
+- **org 필터** - 특정 organization만 포함하거나 제외 가능
 
 ---
 
@@ -83,6 +84,8 @@ your-username/
 | `TITLE` | 커스텀 타이틀 | `Open-Source Contributions` |
 | `SORT_BY` | 정렬 기준 (`date`: 최신순, `count`: PR 많은 순) | `date` |
 | `MONTHS_AGO` | 최근 N개월만 표시 (예: `6`) | 전체 |
+| `EXCLUDE_ORGS` | 제외할 org/user (쉼표 구분) | - |
+| `INCLUDE_ORGS` | 포함할 org/user만 표시 (쉼표 구분) | 전체 |
 
 ### 설정 예시
 
@@ -103,6 +106,15 @@ GitHub 라이트/다크 모드에 따라 자동으로 색상이 전환됩니다:
 3. 다음 변수들 추가:
    - Name: `THEME`, Value: `dark`
    - Name: `MONTHS_AGO`, Value: `6`
+
+**특정 org/user 필터링:**
+
+특정 organization만 표시하거나 제외할 수 있습니다:
+
+- `INCLUDE_ORGS`: `ros2,kubernetes` → ros2, kubernetes org의 PR만 표시
+- `EXCLUDE_ORGS`: `my-company` → my-company org의 PR 제외
+
+> 💡 `INCLUDE_ORGS`가 설정되면 해당 org만 표시되고, `EXCLUDE_ORGS`는 무시됩니다.
 
 ---
 
@@ -133,6 +145,12 @@ THEME=dark node src/index.js <your-username>
 
 # 자동 테마 감지 (GitHub 라이트/다크 모드 자동 전환)
 AUTO_THEME=true node src/index.js <your-username>
+
+# 특정 org만 표시
+INCLUDE_ORGS=ros2,kubernetes node src/index.js <your-username>
+
+# 특정 org 제외
+EXCLUDE_ORGS=my-company node src/index.js <your-username>
 
 # 테스트 (Mock 데이터)
 node src/index.js <your-username> --mock

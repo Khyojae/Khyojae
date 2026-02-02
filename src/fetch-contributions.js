@@ -86,7 +86,9 @@ function httpsGet(url, headers, retries = 3) {
   });
 }
 
-export async function fetchContributions(username, token = null) {
+export async function fetchContributions(username, token = null, options = {}) {
+  const { excludeOrgs = [], includeOrgs = [] } = options;
+
   // 입력 검증
   if (!username || typeof username !== 'string') {
     throw new Error('Username is required and must be a string');
@@ -136,6 +138,23 @@ export async function fetchContributions(username, token = null) {
 
     if (!repoFullName || repoFullName === item.repository_url) {
       continue; // 잘못된 URL 형식 스킵
+    }
+
+    // org/user 필터링
+    const orgName = repoFullName.split('/')[0].toLowerCase();
+
+    // includeOrgs가 설정되어 있으면 해당 org만 포함
+    if (includeOrgs.length > 0) {
+      if (!includeOrgs.map(o => o.toLowerCase()).includes(orgName)) {
+        continue;
+      }
+    }
+
+    // excludeOrgs에 포함된 org는 제외
+    if (excludeOrgs.length > 0) {
+      if (excludeOrgs.map(o => o.toLowerCase()).includes(orgName)) {
+        continue;
+      }
     }
 
     if (!repoMap.has(repoFullName)) {

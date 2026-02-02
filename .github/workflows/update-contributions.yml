@@ -41,6 +41,8 @@ jobs:
           TITLE: ${{ vars.TITLE || 'Open-Source Contributions' }}
           SORT_BY: ${{ vars.SORT_BY || 'date' }}
           MONTHS_AGO: ${{ vars.MONTHS_AGO || '' }}
+          EXCLUDE_ORGS: ${{ vars.EXCLUDE_ORGS || '' }}
+          INCLUDE_ORGS: ${{ vars.INCLUDE_ORGS || '' }}
           OUTPUT_PATH: './contributions.svg'
         run: node src/index.js
 
