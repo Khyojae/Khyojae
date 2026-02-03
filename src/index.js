@@ -16,6 +16,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 
 // 테스트/데모용 mock 데이터
 function getMockData(username) {
+  const sampleBase64 = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=';
   return {
     username,
     totalPRs: 2,
@@ -23,24 +24,32 @@ function getMockData(username) {
     contributions: [
       {
         name: 'ros2/rclpy',
+        owner: 'ros2',
+        avatarUrl: 'https://github.com/ros2.png?size=40',
+        avatarBase64: sampleBase64,
         prs: [
           {
             number: 1492,
             title: 'Fix: deadlock when calling rclpy.shutdown() from callbacks',
             url: 'https://github.com/ros2/rclpy/pull/1492',
-            mergedAt: '2025-10-03T17:37:26Z'
+            mergedAt: '2025-10-03T17:37:26Z',
+            labels: ['bug', 'enhancement']
           }
         ],
         latestMerge: '2025-10-03T17:37:26Z'
       },
       {
         name: 'ros2/rosbag2',
+        owner: 'ros2',
+        avatarUrl: 'https://github.com/ros2.png?size=40',
+        avatarBase64: sampleBase64,
         prs: [
           {
             number: 2135,
             title: 'Fix: Add null pointer check for reader_imp in the Reader constructor',
             url: 'https://github.com/ros2/rosbag2/pull/2135',
-            mergedAt: '2025-08-14T11:10:31Z'
+            mergedAt: '2025-08-14T11:10:31Z',
+            labels: ['bug']
           }
         ],
         latestMerge: '2025-08-14T11:10:31Z'

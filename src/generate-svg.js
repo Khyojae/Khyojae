@@ -106,6 +106,17 @@ function formatDate(dateStr) {
   return `${months[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`;
 }
 
+function getContributionType(labels) {
+  if (!labels || labels.length === 0) return 'Merged';
+  const lowerLabels = labels.map(l => l.toLowerCase());
+  if (lowerLabels.some(l => l.includes('bug') || l.includes('fix'))) return 'Bug Fix';
+  if (lowerLabels.some(l => l.includes('feat') || l.includes('enhancement'))) return 'Feature';
+  if (lowerLabels.some(l => l.includes('doc'))) return 'Docs';
+  if (lowerLabels.some(l => l.includes('test'))) return 'Tests';
+  if (lowerLabels.some(l => l.includes('refactor'))) return 'Refactor';
+  return 'Merged';
+}
+
 /**
  * SVG 카드 생성 - 카드 그리드 스타일
  * @param {Object} data - 기여 데이터
@@ -130,6 +141,7 @@ export function generateSVG(data, options = {}) {
   } = options;
 
   const colors = themes[theme] || themes.light;
+  const ossScore = (data.totalPRs * 10) + (data.totalRepos * 20);
 
   // PR 단위로 펼치기 (레포별이 아닌 PR별로)
   let allPRs = [];
@@ -137,6 +149,7 @@ export function generateSVG(data, options = {}) {
     for (const pr of repo.prs) {
       allPRs.push({
         repoName: repo.name,
+        avatarUrl: repo.avatarBase64 || repo.avatarUrl,
         prCount: repo.prs.length,
         ...pr
       });
@@ -271,7 +284,13 @@ export function generateSVG(data, options = {}) {
       <g transform="translate(0, 26)">
         <svg class="subtitle-icon" width="16" height="16" viewBox="0 0 20 20">${icons.check}</svg>
         <text class="subtitle-text" x="20" y="12" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" font-weight="600">
-          ${data.totalPRs} PR${data.totalPRs !== 1 ? 's' : ''} Merged
+          ${data.totalPRs} PR${data.totalPRs !== 1 ? 's' : ''} Merged · ${data.totalRepos} Repo${data.totalRepos !== 1 ? 's' : ''}
+        </text>
+      </g>
+      <g transform="translate(${width - padding * 2 - 80}, 5)">
+        <rect class="badge-bg" width="80" height="24" rx="12"/>
+        <text class="badge-text" x="40" y="16" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" font-weight="800" text-anchor="middle">
+          Score: ${ossScore}
         </text>
       </g>
     </g>
@@ -283,7 +302,13 @@ export function generateSVG(data, options = {}) {
       <g transform="translate(0, 26)">
         <svg width="16" height="16" viewBox="0 0 20 20" fill="${colors.subtitle}">${icons.check}</svg>
         <text x="20" y="12" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="${colors.subtitle}">
-          ${data.totalPRs} PR${data.totalPRs !== 1 ? 's' : ''} Merged
+          ${data.totalPRs} PR${data.totalPRs !== 1 ? 's' : ''} Merged · ${data.totalRepos} Repo${data.totalRepos !== 1 ? 's' : ''}
+        </text>
+      </g>
+      <g transform="translate(${width - padding * 2 - 80}, 5)">
+        <rect width="80" height="24" rx="12" fill="${colors.badge}"/>
+        <text x="40" y="16" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" font-weight="800" fill="${colors.badgeText}" text-anchor="middle">
+          Score: ${ossScore}
         </text>
       </g>
     </g>
@@ -296,6 +321,7 @@ export function generateSVG(data, options = {}) {
     const x = padding + col * (cardWidth + cardGap);
     const y = headerHeight + padding + row * (cardHeight + cardGap);
     const prNumber = pr.number ? `#${pr.number}` : '';
+    const contributionType = getContributionType(pr.labels);
 
     if (autoTheme) {
       return `
@@ -303,10 +329,15 @@ export function generateSVG(data, options = {}) {
         <!-- Card Background -->
         <rect class="card-bg" width="${cardWidth}" height="${cardHeight}" rx="12"/>
 
-        <!-- GitHub Icon -->
+        <!-- Repo Icon -->
         <g transform="translate(14, 14)">
+          <defs>
+            <clipPath id="circleView-${index}">
+              <circle cx="14" cy="14" r="14"/>
+            </clipPath>
+          </defs>
           <circle class="icon-bg" cx="14" cy="14" r="14"/>
-          <svg class="icon-color" x="6" y="6" width="16" height="16" viewBox="0 0 16 16">${icons.github}</svg>
+          <image href="${pr.avatarUrl}" x="0" y="0" width="28" height="28" clip-path="url(#circleView-${index})"/>
         </g>
 
         <!-- Repo Name & PR Number -->
@@ -322,16 +353,16 @@ export function generateSVG(data, options = {}) {
           ${escapeXml(truncate(pr.title, 22))}
         </text>
 
-        <!-- Merged Badge -->
+        <!-- Contribution Type Badge -->
         <g transform="translate(14, 70)">
-          <rect class="badge-bg" width="58" height="18" rx="4"/>
-          <text class="badge-text" x="29" y="13" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="600" text-anchor="middle">
-            Merged
+          <rect class="badge-bg" width="65" height="18" rx="4"/>
+          <text class="badge-text" x="32.5" y="13" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="9" font-weight="700" text-anchor="middle">
+            ${escapeXml(contributionType)}
           </text>
         </g>
 
         <!-- Date -->
-        <g transform="translate(80, 70)">
+        <g transform="translate(85, 70)">
           <svg class="date-icon" width="12" height="12" viewBox="0 0 20 20">${icons.calendar}</svg>
           <text class="date-text" x="16" y="10" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="9">
             ${formatDate(pr.mergedAt)}
@@ -346,10 +377,15 @@ export function generateSVG(data, options = {}) {
         <!-- Card Background -->
         <rect width="${cardWidth}" height="${cardHeight}" rx="12" fill="${colors.cardBg}"/>
 
-        <!-- GitHub Icon -->
+        <!-- Repo Icon -->
         <g transform="translate(14, 14)">
+          <defs>
+            <clipPath id="circleView-${index}">
+              <circle cx="14" cy="14" r="14"/>
+            </clipPath>
+          </defs>
           <circle cx="14" cy="14" r="14" fill="#2d3348"/>
-          <svg x="6" y="6" width="16" height="16" viewBox="0 0 16 16" fill="#ffffff">${icons.github}</svg>
+          <image href="${pr.avatarUrl}" x="0" y="0" width="28" height="28" clip-path="url(#circleView-${index})"/>
         </g>
 
         <!-- Repo Name & PR Number -->
@@ -365,16 +401,16 @@ export function generateSVG(data, options = {}) {
           ${escapeXml(truncate(pr.title, 22))}
         </text>
 
-        <!-- Merged Badge -->
+        <!-- Contribution Type Badge -->
         <g transform="translate(14, 70)">
-          <rect width="58" height="18" rx="4" fill="${colors.badge}"/>
-          <text x="29" y="13" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="${colors.badgeText}" text-anchor="middle">
-            Merged
+          <rect width="65" height="18" rx="4" fill="${colors.badge}"/>
+          <text x="32.5" y="13" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="9" font-weight="700" fill="${colors.badgeText}" text-anchor="middle">
+            ${escapeXml(contributionType)}
           </text>
         </g>
 
         <!-- Date -->
-        <g transform="translate(80, 70)">
+        <g transform="translate(85, 70)">
           <svg width="12" height="12" viewBox="0 0 20 20" fill="${colors.dateIcon}">${icons.calendar}</svg>
           <text x="16" y="10" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="9" fill="${colors.date}">
             ${formatDate(pr.mergedAt)}

@@ -8,18 +8,40 @@ import https from 'https';
 
 const REQUEST_TIMEOUT = 30000; // 30초
 
-function httpsGet(url, headers, retries = 3) {
+function httpsGet(url, headers, retries = 3, returnBuffer = false) {
   return new Promise((resolve, reject) => {
-    const options = {
-      headers: {
-        ...headers,
-        'User-Agent': 'github-contribution-widget'
-      },
-      timeout: REQUEST_TIMEOUT
-    };
+    const makeRequest = (attempt, currentUrl) => {
+      const options = {
+        headers: {
+          ...headers,
+          'User-Agent': 'github-contribution-widget'
+        },
+        timeout: REQUEST_TIMEOUT
+      };
 
-    const makeRequest = (attempt) => {
-      const req = https.get(url, options, (res) => {
+      const req = https.get(currentUrl || url, options, (res) => {
+        if ((res.statusCode === 301 || res.statusCode === 302) && res.headers.location) {
+          if (attempt < retries) {
+            makeRequest(attempt + 1, res.headers.location);
+          } else {
+            reject(new Error('Too many redirects'));
+          }
+          return;
+        }
+
+        if (returnBuffer) {
+          const chunks = [];
+          res.on('data', chunk => chunks.push(chunk));
+          res.on('end', () => {
+            if (res.statusCode >= 200 && res.statusCode < 300) {
+              resolve(Buffer.concat(chunks));
+            } else {
+              reject(new Error(`Failed to fetch buffer: ${res.statusCode}`));
+            }
+          });
+          return;
+        }
+
         let data = '';
         res.on('data', chunk => data += chunk);
         res.on('end', () => {
@@ -84,6 +106,15 @@ function httpsGet(url, headers, retries = 3) {
 
     makeRequest(0);
   });
+}
+
+async function fetchAvatarAsBase64(url) {
+  try {
+    const buffer = await httpsGet(url, {}, 2, true);
+    return `data:image/png;base64,${buffer.toString('base64')}`;
+  } catch (err) {
+    return null;
+  }
 }
 
 export async function fetchContributions(username, token = null, options = {}) {
@@ -158,8 +189,14 @@ export async function fetchContributions(username, token = null, options = {}) {
     }
 
     if (!repoMap.has(repoFullName)) {
+      const owner = repoFullName.split('/')[0];
+      const avatarUrl = `https://github.com/${owner}.png?size=40`;
+      
       repoMap.set(repoFullName, {
         name: repoFullName,
+        owner: owner,
+        avatarUrl: avatarUrl,
+        avatarBase64: null,
         prs: [],
         latestMerge: null
       });
@@ -167,12 +204,15 @@ export async function fetchContributions(username, token = null, options = {}) {
 
     const repo = repoMap.get(repoFullName);
     const mergedAt = item.pull_request?.merged_at || null;
+    
+    const labels = Array.isArray(item.labels) ? item.labels.map(l => l.name) : [];
 
     repo.prs.push({
       number: item.number || 0,
       title: item.title || 'Untitled PR',
       url: item.html_url || '',
-      mergedAt: mergedAt
+      mergedAt: mergedAt,
+      labels: labels
     });
 
     // 가장 최근 merge 날짜 업데이트
@@ -184,6 +224,11 @@ export async function fetchContributions(username, token = null, options = {}) {
   // 배열로 변환하고 PR 수 기준 정렬
   const contributions = Array.from(repoMap.values())
     .sort((a, b) => b.prs.length - a.prs.length);
+
+  const topRepos = contributions.slice(0, 10);
+  await Promise.all(topRepos.map(async (repo) => {
+    repo.avatarBase64 = await fetchAvatarAsBase64(repo.avatarUrl);
+  }));
 
   return {
     username: sanitizedUsername,
