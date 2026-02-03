@@ -6,9 +6,9 @@
  * @source https://github.com/dbwls99706/oss-contribution-card
  */
 
-import { fetchContributions } from './fetch-contributions.js';
+import { fetchContributions, fetchFeaturedPRs } from './fetch-contributions.js';
 import { generateSVG, generateEmptySVG } from './generate-svg.js';
-import { writeFileSync, existsSync, mkdirSync } from 'fs';
+import { writeFileSync, readFileSync, existsSync, mkdirSync } from 'fs';
 import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
 
@@ -71,6 +71,7 @@ async function main() {
   const monthsAgo = process.env.MONTHS_AGO ? parseInt(process.env.MONTHS_AGO, 10) : null;
   const excludeOrgs = process.env.EXCLUDE_ORGS ? process.env.EXCLUDE_ORGS.split(',').map(s => s.trim()).filter(Boolean) : [];
   const includeOrgs = process.env.INCLUDE_ORGS ? process.env.INCLUDE_ORGS.split(',').map(s => s.trim()).filter(Boolean) : [];
+  const featuredPrsPath = process.env.FEATURED_PRS_PATH || './featured-prs.json';
   const useMock = process.env.USE_MOCK === 'true' || process.argv.includes('--mock');
   const previewThemes = process.env.PREVIEW_THEMES ? process.env.PREVIEW_THEMES.split(',').map(s => s.trim()).filter(Boolean) : [];
 
@@ -94,7 +95,35 @@ async function main() {
   }
 
   try {
-    const data = useMock ? getMockData(username) : await fetchContributions(username, token, { excludeOrgs, includeOrgs });
+    let data;
+
+    if (useMock) {
+      data = getMockData(username);
+    } else {
+      data = await fetchContributions(username, token, { excludeOrgs, includeOrgs });
+    }
+
+    // featured-prs.json이 존재하면 카드에 표시할 PR을 해당 파일 기준으로 교체
+    if (!useMock && existsSync(featuredPrsPath)) {
+      try {
+        const raw = readFileSync(featuredPrsPath, 'utf-8');
+        const prList = JSON.parse(raw);
+
+        if (Array.isArray(prList) && prList.length > 0) {
+          console.log(`\nFeatured PRs mode: loading ${prList.length} PR(s) from ${featuredPrsPath}`);
+          const featuredContributions = await fetchFeaturedPRs(prList, token);
+
+          // totalPRs는 기존 API 결과 유지, contributions만 교체
+          data = {
+            ...data,
+            totalRepos: featuredContributions.length,
+            contributions: featuredContributions
+          };
+        }
+      } catch (parseErr) {
+        console.warn(`Warning: Failed to parse ${featuredPrsPath}: ${parseErr.message}. Using default mode.`);
+      }
+    }
 
     console.log(`Found ${data.totalPRs} merged PRs in ${data.totalRepos} external repositories`);
 

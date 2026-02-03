@@ -237,3 +237,71 @@ export async function fetchContributions(username, token = null, options = {}) {
     contributions
   };
 }
+
+/**
+ * 개별 PR 정보를 GitHub API로 조회
+ */
+async function fetchSinglePR(owner, repo, prNumber, headers) {
+  const url = `https://api.github.com/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/pulls/${prNumber}`;
+  const data = await httpsGet(url, headers);
+
+  return {
+    number: data.number,
+    title: data.title || 'Untitled PR',
+    url: data.html_url || '',
+    mergedAt: data.merged_at || null
+  };
+}
+
+/**
+ * featured-prs.json에 지정된 PR만 개별 조회하여 contributions 형태로 반환
+ * @param {string[]} prList - ["org/repo#123", ...] 형태의 배열
+ * @param {string|null} token - GitHub API 토큰
+ * @returns {Object[]} contributions 배열
+ */
+export async function fetchFeaturedPRs(prList, token = null) {
+  const headers = {
+    'Accept': 'application/vnd.github.v3+json'
+  };
+  if (token) {
+    headers['Authorization'] = `token ${token}`;
+  }
+
+  const repoMap = new Map();
+
+  for (const entry of prList) {
+    // "org/repo#123" 파싱
+    const match = entry.match(/^([^/]+\/[^#]+)#(\d+)$/);
+    if (!match) {
+      console.warn(`Warning: Invalid featured PR format "${entry}", expected "owner/repo#number". Skipping.`);
+      continue;
+    }
+
+    const repoFullName = match[1];
+    const prNumber = parseInt(match[2], 10);
+    const [owner, repo] = repoFullName.split('/');
+
+    try {
+      const pr = await fetchSinglePR(owner, repo, prNumber, headers);
+
+      if (!repoMap.has(repoFullName)) {
+        repoMap.set(repoFullName, {
+          name: repoFullName,
+          prs: [],
+          latestMerge: null
+        });
+      }
+
+      const repoEntry = repoMap.get(repoFullName);
+      repoEntry.prs.push(pr);
+
+      if (pr.mergedAt && (!repoEntry.latestMerge || new Date(pr.mergedAt) > new Date(repoEntry.latestMerge))) {
+        repoEntry.latestMerge = pr.mergedAt;
+      }
+    } catch (err) {
+      console.warn(`Warning: Failed to fetch ${entry}: ${err.message}. Skipping.`);
+    }
+  }
+
+  return Array.from(repoMap.values());
+}
