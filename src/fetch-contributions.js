@@ -241,7 +241,7 @@ export async function fetchContributions(username, token = null, options = {}) {
 /**
  * 개별 PR 정보를 GitHub API로 조회
  */
-async function fetchSinglePR(owner, repo, prNumber, headers) {
+async function fetchSinglePR({ owner, repo, prNumber, headers }) {
   const url = `https://api.github.com/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/pulls/${prNumber}`;
   const data = await httpsGet(url, headers);
 
@@ -282,7 +282,7 @@ export async function fetchFeaturedPRs(prList, token = null) {
     const [owner, repo] = repoFullName.split('/');
 
     try {
-      const pr = await fetchSinglePR(owner, repo, prNumber, headers);
+      const pr = await fetchSinglePR({ owner, repo, prNumber, headers });
 
       if (!repoMap.has(repoFullName)) {
         repoMap.set(repoFullName, {
