@@ -277,39 +277,53 @@ export async function fetchFeaturedPRs(prList, token = null) {
     headers['Authorization'] = `token ${token}`;
   }
 
-  const repoMap = new Map();
-
+  // PR 항목 파싱
+  const parsed = [];
   for (const entry of prList) {
-    // "org/repo#123" 파싱
     const match = entry.match(/^([^/]+\/[^#]+)#(\d+)$/);
     if (!match) {
       console.warn(`Warning: Invalid featured PR format "${entry}", expected "owner/repo#number". Skipping.`);
       continue;
     }
-
     const repoFullName = match[1];
     const prNumber = parseInt(match[2], 10);
     const [owner, repo] = repoFullName.split('/');
+    parsed.push({ entry, repoFullName, owner, repo, prNumber });
+  }
 
-    try {
-      const pr = await fetchSinglePR({ owner, repo, prNumber, headers });
+  // 병렬로 API 호출
+  const results = await Promise.allSettled(
+    parsed.map(({ owner, repo, prNumber }) =>
+      fetchSinglePR({ owner, repo, prNumber, headers })
+    )
+  );
 
-      if (!repoMap.has(repoFullName)) {
-        repoMap.set(repoFullName, {
-          name: repoFullName,
-          prs: [],
-          latestMerge: null
-        });
-      }
+  // 결과를 레포별로 그룹화
+  const repoMap = new Map();
+  for (let i = 0; i < results.length; i++) {
+    const result = results[i];
+    const { entry, repoFullName } = parsed[i];
 
-      const repoEntry = repoMap.get(repoFullName);
-      repoEntry.prs.push(pr);
+    if (result.status === 'rejected') {
+      console.warn(`Warning: Failed to fetch ${entry}: ${result.reason.message}. Skipping.`);
+      continue;
+    }
 
-      if (pr.mergedAt && (!repoEntry.latestMerge || new Date(pr.mergedAt) > new Date(repoEntry.latestMerge))) {
-        repoEntry.latestMerge = pr.mergedAt;
-      }
-    } catch (err) {
-      console.warn(`Warning: Failed to fetch ${entry}: ${err.message}. Skipping.`);
+    const pr = result.value;
+
+    if (!repoMap.has(repoFullName)) {
+      repoMap.set(repoFullName, {
+        name: repoFullName,
+        prs: [],
+        latestMerge: null
+      });
+    }
+
+    const repoEntry = repoMap.get(repoFullName);
+    repoEntry.prs.push(pr);
+
+    if (pr.mergedAt && (!repoEntry.latestMerge || new Date(pr.mergedAt) > new Date(repoEntry.latestMerge))) {
+      repoEntry.latestMerge = pr.mergedAt;
     }
   }
 
