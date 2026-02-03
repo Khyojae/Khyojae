@@ -72,6 +72,7 @@ async function main() {
   const excludeOrgs = process.env.EXCLUDE_ORGS ? process.env.EXCLUDE_ORGS.split(',').map(s => s.trim()).filter(Boolean) : [];
   const includeOrgs = process.env.INCLUDE_ORGS ? process.env.INCLUDE_ORGS.split(',').map(s => s.trim()).filter(Boolean) : [];
   const useMock = process.env.USE_MOCK === 'true' || process.argv.includes('--mock');
+  const previewThemes = process.env.PREVIEW_THEMES ? process.env.PREVIEW_THEMES.split(',').map(s => s.trim()).filter(Boolean) : [];
 
   if (!username) {
     console.error('Error: GitHub username is required.');
@@ -118,6 +119,20 @@ async function main() {
     // 파일 저장
     writeFileSync(outputPath, svg);
     console.log(`\nSVG saved to: ${outputPath}`);
+
+    // Preview 테마 SVG 생성 (README용)
+    if (previewThemes.length > 0) {
+      console.log(`\nGenerating preview themes: ${previewThemes.join(', ')}`);
+      for (const previewTheme of previewThemes) {
+        const previewSvg = data.totalRepos > 0
+          ? generateSVG(data, { theme: previewTheme, autoTheme: false, maxRepos, title, sortBy, monthsAgo })
+          : generateEmptySVG(username, { theme: previewTheme, autoTheme: false, title });
+
+        const previewPath = `./contributions-${previewTheme}.svg`;
+        writeFileSync(previewPath, previewSvg);
+        console.log(`SVG saved to: ${previewPath}`);
+      }
+    }
 
   } catch (error) {
     console.error('Error:', error.message);
