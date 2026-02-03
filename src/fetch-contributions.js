@@ -243,7 +243,17 @@ export async function fetchContributions(username, token = null, options = {}) {
  */
 async function fetchSinglePR({ owner, repo, prNumber, headers }) {
   const url = `https://api.github.com/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/pulls/${prNumber}`;
-  const data = await httpsGet(url, headers);
+
+  let data;
+  try {
+    data = await httpsGet(url, headers);
+  } catch (err) {
+    throw new Error(`Failed to fetch ${owner}/${repo}#${prNumber}: ${err.message}`);
+  }
+
+  if (!data || typeof data !== 'object' || !data.number) {
+    throw new Error(`Invalid response for ${owner}/${repo}#${prNumber}: missing required fields`);
+  }
 
   return {
     number: data.number,
