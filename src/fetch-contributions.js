@@ -257,9 +257,9 @@ async function fetchSinglePR({ owner, repo, prNumber, headers }) {
 
   return {
     number: data.number,
-    title: data.title || 'Untitled PR',
-    url: data.html_url || '',
-    mergedAt: data.merged_at || null
+    title: data.title ?? 'Untitled PR',
+    url: data.html_url ?? '',
+    mergedAt: data.merged_at ?? null
   };
 }
 
