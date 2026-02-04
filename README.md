@@ -25,6 +25,7 @@ GitHub 프로필 README에 **외부 오픈소스 기여 내역**을 자동으로
 - **OSS Score** - 오픈소스 기여도를 점수로 표시
 - **기여 유형 자동 분류** - PR 라벨 기반으로 Bug Fix, Feature, Docs 등 자동 표시
 - **레포지토리 아이콘** - 각 카드에 레포 오너의 아바타 표시
+- **Featured PRs** - 노출할 PR을 수동으로 선택 가능
 
 ---
 
@@ -89,6 +90,7 @@ your-username/
 | `MONTHS_AGO` | 최근 N개월만 표시 (예: `6`) | 전체 |
 | `EXCLUDE_ORGS` | 제외할 org/user (쉼표 구분) | - |
 | `INCLUDE_ORGS` | 포함할 org/user만 표시 (쉼표 구분) | 전체 |
+| `FEATURED_PRS_PATH` | Featured PRs 설정 파일 경로 | `./featured-prs.json` |
 
 ### 설정 예시
 
@@ -169,6 +171,31 @@ OSS Score = (총 Merge된 PR 수 × 10) + (기여한 레포 수 × 20)
 | Tests | `test` |
 | Refactor | `refactor` |
 | Merged | (라벨 없음 또는 기타) |
+
+---
+
+## Featured PRs (수동 선택)
+
+특정 PR만 카드에 노출하고 싶을 때 사용합니다.
+
+### 설정 방법
+
+프로젝트 루트에 `featured-prs.json` 파일 생성:
+
+```json
+[
+  "facebook/react#12345",
+  "kubernetes/kubernetes#67890"
+]
+```
+
+형식: `"소유자/레포명#PR번호"`
+
+### 동작
+
+- 파일이 있으면 → 지정된 PR만 카드에 표시
+- 파일이 없으면 → 기존처럼 자동 표시
+- 헤더의 총 PR 수와 레포 수는 전체 기여 기준 유지
 
 ---
 
