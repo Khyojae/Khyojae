@@ -255,11 +255,14 @@ async function fetchSinglePR({ owner, repo, prNumber, headers }) {
     throw new Error(`Invalid response for ${owner}/${repo}#${prNumber}: missing required fields`);
   }
 
+  const labels = Array.isArray(data.labels) ? data.labels.map(l => l.name) : [];
+
   return {
     number: data.number,
     title: data.title ?? 'Untitled PR',
     url: data.html_url ?? '',
-    mergedAt: data.merged_at ?? null
+    mergedAt: data.merged_at ?? null,
+    labels
   };
 }
 
@@ -312,8 +315,14 @@ export async function fetchFeaturedPRs(prList, token = null) {
     const pr = result.value;
 
     if (!repoMap.has(repoFullName)) {
+      const owner = repoFullName.split('/')[0];
+      const avatarUrl = `https://github.com/${owner}.png?size=40`;
+
       repoMap.set(repoFullName, {
         name: repoFullName,
+        owner,
+        avatarUrl,
+        avatarBase64: null,
         prs: [],
         latestMerge: null
       });
@@ -327,5 +336,11 @@ export async function fetchFeaturedPRs(prList, token = null) {
     }
   }
 
-  return Array.from(repoMap.values());
+  // 아바타 이미지를 병렬로 가져오기
+  const contributions = Array.from(repoMap.values());
+  await Promise.all(contributions.map(async (repo) => {
+    repo.avatarBase64 = await fetchAvatarAsBase64(repo.avatarUrl);
+  }));
+
+  return contributions;
 }
