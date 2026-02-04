@@ -237,3 +237,110 @@ export async function fetchContributions(username, token = null, options = {}) {
     contributions
   };
 }
+
+/**
+ * 개별 PR 정보를 GitHub API로 조회
+ */
+async function fetchSinglePR({ owner, repo, prNumber, headers }) {
+  const url = `https://api.github.com/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/pulls/${prNumber}`;
+
+  let data;
+  try {
+    data = await httpsGet(url, headers);
+  } catch (err) {
+    throw new Error(`Failed to fetch ${owner}/${repo}#${prNumber}: ${err.message}`);
+  }
+
+  if (!data || typeof data !== 'object' || !data.number) {
+    throw new Error(`Invalid response for ${owner}/${repo}#${prNumber}: missing required fields`);
+  }
+
+  const labels = Array.isArray(data.labels) ? data.labels.map(l => l.name) : [];
+
+  return {
+    number: data.number,
+    title: data.title ?? 'Untitled PR',
+    url: data.html_url ?? '',
+    mergedAt: data.merged_at ?? null,
+    labels
+  };
+}
+
+/**
+ * featured-prs.json에 지정된 PR만 개별 조회하여 contributions 형태로 반환
+ * @param {string[]} prList - ["org/repo#123", ...] 형태의 배열
+ * @param {string|null} token - GitHub API 토큰
+ * @returns {Object[]} contributions 배열
+ */
+export async function fetchFeaturedPRs(prList, token = null) {
+  const headers = {
+    'Accept': 'application/vnd.github.v3+json'
+  };
+  if (token) {
+    headers['Authorization'] = `token ${token}`;
+  }
+
+  // PR 항목 파싱
+  const parsed = [];
+  for (const entry of prList) {
+    const match = entry.match(/^([^/]+\/[^#]+)#(\d+)$/);
+    if (!match) {
+      console.warn(`Warning: Invalid featured PR format "${entry}", expected "owner/repo#number". Skipping.`);
+      continue;
+    }
+    const repoFullName = match[1];
+    const prNumber = parseInt(match[2], 10);
+    const [owner, repo] = repoFullName.split('/');
+    parsed.push({ entry, repoFullName, owner, repo, prNumber });
+  }
+
+  // 병렬로 API 호출
+  const results = await Promise.allSettled(
+    parsed.map(({ owner, repo, prNumber }) =>
+      fetchSinglePR({ owner, repo, prNumber, headers })
+    )
+  );
+
+  // 결과를 레포별로 그룹화
+  const repoMap = new Map();
+  for (let i = 0; i < results.length; i++) {
+    const result = results[i];
+    const { entry, repoFullName } = parsed[i];
+
+    if (result.status === 'rejected') {
+      console.warn(`Warning: Failed to fetch ${entry}: ${result.reason.message}. Skipping.`);
+      continue;
+    }
+
+    const pr = result.value;
+
+    if (!repoMap.has(repoFullName)) {
+      const owner = repoFullName.split('/')[0];
+      const avatarUrl = `https://github.com/${owner}.png?size=40`;
+
+      repoMap.set(repoFullName, {
+        name: repoFullName,
+        owner,
+        avatarUrl,
+        avatarBase64: null,
+        prs: [],
+        latestMerge: null
+      });
+    }
+
+    const repoEntry = repoMap.get(repoFullName);
+    repoEntry.prs.push(pr);
+
+    if (pr.mergedAt && (!repoEntry.latestMerge || new Date(pr.mergedAt) > new Date(repoEntry.latestMerge))) {
+      repoEntry.latestMerge = pr.mergedAt;
+    }
+  }
+
+  // 아바타 이미지를 병렬로 가져오기
+  const contributions = Array.from(repoMap.values());
+  await Promise.all(contributions.map(async (repo) => {
+    repo.avatarBase64 = await fetchAvatarAsBase64(repo.avatarUrl);
+  }));
+
+  return contributions;
+}
