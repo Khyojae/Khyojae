@@ -113,10 +113,9 @@ async function main() {
           console.log(`\nFeatured PRs mode: loading ${prList.length} PR(s) from ${featuredPrsPath}`);
           const featuredContributions = await fetchFeaturedPRs(prList, token);
 
-          // totalPRs는 기존 API 결과 유지, contributions만 교체
+          // totalPRs, totalRepos는 기존 API 결과 유지, contributions만 교체
           data = {
             ...data,
-            totalRepos: featuredContributions.length,
             contributions: featuredContributions
           };
         }
