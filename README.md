@@ -29,7 +29,7 @@
 
 Open Source Contributions
 ---
-
+![My Contributions](./contributions.svg)
 
 
 <a href="https://github.com/devxb/gitanimals">
