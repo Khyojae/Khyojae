@@ -8,18 +8,40 @@ import https from 'https';
 
 const REQUEST_TIMEOUT = 30000; // 30초
 
-function httpsGet(url, headers, retries = 3) {
+function httpsGet(url, headers, retries = 3, returnBuffer = false) {
   return new Promise((resolve, reject) => {
-    const options = {
-      headers: {
-        ...headers,
-        'User-Agent': 'github-contribution-widget'
-      },
-      timeout: REQUEST_TIMEOUT
-    };
+    const makeRequest = (attempt, currentUrl) => {
+      const options = {
+        headers: {
+          ...headers,
+          'User-Agent': 'github-contribution-widget'
+        },
+        timeout: REQUEST_TIMEOUT
+      };
 
-    const makeRequest = (attempt) => {
-      const req = https.get(url, options, (res) => {
+      const req = https.get(currentUrl || url, options, (res) => {
+        if ((res.statusCode === 301 || res.statusCode === 302) && res.headers.location) {
+          if (attempt < retries) {
+            makeRequest(attempt + 1, res.headers.location);
+          } else {
+            reject(new Error('Too many redirects'));
+          }
+          return;
+        }
+
+        if (returnBuffer) {
+          const chunks = [];
+          res.on('data', chunk => chunks.push(chunk));
+          res.on('end', () => {
+            if (res.statusCode >= 200 && res.statusCode < 300) {
+              resolve(Buffer.concat(chunks));
+            } else {
+              reject(new Error(`Failed to fetch buffer: ${res.statusCode}`));
+            }
+          });
+          return;
+        }
+
         let data = '';
         res.on('data', chunk => data += chunk);
         res.on('end', () => {
@@ -86,7 +108,18 @@ function httpsGet(url, headers, retries = 3) {
   });
 }
 
-export async function fetchContributions(username, token = null) {
+async function fetchAvatarAsBase64(url) {
+  try {
+    const buffer = await httpsGet(url, {}, 2, true);
+    return `data:image/png;base64,${buffer.toString('base64')}`;
+  } catch (err) {
+    return null;
+  }
+}
+
+export async function fetchContributions(username, token = null, options = {}) {
+  const { excludeOrgs = [], includeOrgs = [] } = options;
+
   // 입력 검증
   if (!username || typeof username !== 'string') {
     throw new Error('Username is required and must be a string');
@@ -138,9 +171,32 @@ export async function fetchContributions(username, token = null) {
       continue; // 잘못된 URL 형식 스킵
     }
 
+    // org/user 필터링
+    const orgName = repoFullName.split('/')[0].toLowerCase();
+
+    // includeOrgs가 설정되어 있으면 해당 org만 포함
+    if (includeOrgs.length > 0) {
+      if (!includeOrgs.map(o => o.toLowerCase()).includes(orgName)) {
+        continue;
+      }
+    }
+
+    // excludeOrgs에 포함된 org는 제외
+    if (excludeOrgs.length > 0) {
+      if (excludeOrgs.map(o => o.toLowerCase()).includes(orgName)) {
+        continue;
+      }
+    }
+
     if (!repoMap.has(repoFullName)) {
+      const owner = repoFullName.split('/')[0];
+      const avatarUrl = `https://github.com/${owner}.png?size=40`;
+      
       repoMap.set(repoFullName, {
         name: repoFullName,
+        owner: owner,
+        avatarUrl: avatarUrl,
+        avatarBase64: null,
         prs: [],
         latestMerge: null
       });
@@ -148,12 +204,15 @@ export async function fetchContributions(username, token = null) {
 
     const repo = repoMap.get(repoFullName);
     const mergedAt = item.pull_request?.merged_at || null;
+    
+    const labels = Array.isArray(item.labels) ? item.labels.map(l => l.name) : [];
 
     repo.prs.push({
       number: item.number || 0,
       title: item.title || 'Untitled PR',
       url: item.html_url || '',
-      mergedAt: mergedAt
+      mergedAt: mergedAt,
+      labels: labels
     });
 
     // 가장 최근 merge 날짜 업데이트
@@ -166,10 +225,122 @@ export async function fetchContributions(username, token = null) {
   const contributions = Array.from(repoMap.values())
     .sort((a, b) => b.prs.length - a.prs.length);
 
+  const topRepos = contributions.slice(0, 10);
+  await Promise.all(topRepos.map(async (repo) => {
+    repo.avatarBase64 = await fetchAvatarAsBase64(repo.avatarUrl);
+  }));
+
   return {
     username: sanitizedUsername,
     totalPRs: data.total_count || 0,
     totalRepos: contributions.length,
     contributions
   };
+}
+
+/**
+ * 개별 PR 정보를 GitHub API로 조회
+ */
+async function fetchSinglePR({ owner, repo, prNumber, headers }) {
+  const url = `https://api.github.com/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/pulls/${prNumber}`;
+
+  let data;
+  try {
+    data = await httpsGet(url, headers);
+  } catch (err) {
+    throw new Error(`Failed to fetch ${owner}/${repo}#${prNumber}: ${err.message}`);
+  }
+
+  if (!data || typeof data !== 'object' || !data.number) {
+    throw new Error(`Invalid response for ${owner}/${repo}#${prNumber}: missing required fields`);
+  }
+
+  const labels = Array.isArray(data.labels) ? data.labels.map(l => l.name) : [];
+
+  return {
+    number: data.number,
+    title: data.title ?? 'Untitled PR',
+    url: data.html_url ?? '',
+    mergedAt: data.merged_at ?? null,
+    labels
+  };
+}
+
+/**
+ * featured-prs.json에 지정된 PR만 개별 조회하여 contributions 형태로 반환
+ * @param {string[]} prList - ["org/repo#123", ...] 형태의 배열
+ * @param {string|null} token - GitHub API 토큰
+ * @returns {Object[]} contributions 배열
+ */
+export async function fetchFeaturedPRs(prList, token = null) {
+  const headers = {
+    'Accept': 'application/vnd.github.v3+json'
+  };
+  if (token) {
+    headers['Authorization'] = `token ${token}`;
+  }
+
+  // PR 항목 파싱
+  const parsed = [];
+  for (const entry of prList) {
+    const match = entry.match(/^([^/]+\/[^#]+)#(\d+)$/);
+    if (!match) {
+      console.warn(`Warning: Invalid featured PR format "${entry}", expected "owner/repo#number". Skipping.`);
+      continue;
+    }
+    const repoFullName = match[1];
+    const prNumber = parseInt(match[2], 10);
+    const [owner, repo] = repoFullName.split('/');
+    parsed.push({ entry, repoFullName, owner, repo, prNumber });
+  }
+
+  // 병렬로 API 호출
+  const results = await Promise.allSettled(
+    parsed.map(({ owner, repo, prNumber }) =>
+      fetchSinglePR({ owner, repo, prNumber, headers })
+    )
+  );
+
+  // 결과를 레포별로 그룹화
+  const repoMap = new Map();
+  for (let i = 0; i < results.length; i++) {
+    const result = results[i];
+    const { entry, repoFullName } = parsed[i];
+
+    if (result.status === 'rejected') {
+      console.warn(`Warning: Failed to fetch ${entry}: ${result.reason.message}. Skipping.`);
+      continue;
+    }
+
+    const pr = result.value;
+
+    if (!repoMap.has(repoFullName)) {
+      const owner = repoFullName.split('/')[0];
+      const avatarUrl = `https://github.com/${owner}.png?size=40`;
+
+      repoMap.set(repoFullName, {
+        name: repoFullName,
+        owner,
+        avatarUrl,
+        avatarBase64: null,
+        prs: [],
+        latestMerge: null
+      });
+    }
+
+    const repoEntry = repoMap.get(repoFullName);
+    repoEntry.prs.push(pr);
+
+    if (pr.mergedAt && (!repoEntry.latestMerge || new Date(pr.mergedAt) > new Date(repoEntry.latestMerge))) {
+      repoEntry.latestMerge = pr.mergedAt;
+    }
+  }
+
+  // 아바타 이미지를 병렬로 가져오기
+  const contributions = Array.from(repoMap.values());
+  await Promise.all(contributions.map(async (repo) => {
+    repo.avatarBase64 = await fetchAvatarAsBase64(repo.avatarUrl);
+  }));
+
+  return contributions;
 }

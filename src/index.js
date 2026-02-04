@@ -6,9 +6,9 @@
  * @source https://github.com/dbwls99706/oss-contribution-card
  */
 
-import { fetchContributions } from './fetch-contributions.js';
+import { fetchContributions, fetchFeaturedPRs } from './fetch-contributions.js';
 import { generateSVG, generateEmptySVG } from './generate-svg.js';
-import { writeFileSync, existsSync, mkdirSync } from 'fs';
+import { writeFileSync, readFileSync, existsSync, mkdirSync } from 'fs';
 import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
 
@@ -16,6 +16,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 
 // 테스트/데모용 mock 데이터
 function getMockData(username) {
+  const sampleBase64 = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=';
   return {
     username,
     totalPRs: 2,
@@ -23,24 +24,32 @@ function getMockData(username) {
     contributions: [
       {
         name: 'ros2/rclpy',
+        owner: 'ros2',
+        avatarUrl: 'https://github.com/ros2.png?size=40',
+        avatarBase64: sampleBase64,
         prs: [
           {
             number: 1492,
             title: 'Fix: deadlock when calling rclpy.shutdown() from callbacks',
             url: 'https://github.com/ros2/rclpy/pull/1492',
-            mergedAt: '2025-10-03T17:37:26Z'
+            mergedAt: '2025-10-03T17:37:26Z',
+            labels: ['bug', 'enhancement']
           }
         ],
         latestMerge: '2025-10-03T17:37:26Z'
       },
       {
         name: 'ros2/rosbag2',
+        owner: 'ros2',
+        avatarUrl: 'https://github.com/ros2.png?size=40',
+        avatarBase64: sampleBase64,
         prs: [
           {
             number: 2135,
             title: 'Fix: Add null pointer check for reader_imp in the Reader constructor',
             url: 'https://github.com/ros2/rosbag2/pull/2135',
-            mergedAt: '2025-08-14T11:10:31Z'
+            mergedAt: '2025-08-14T11:10:31Z',
+            labels: ['bug']
           }
         ],
         latestMerge: '2025-08-14T11:10:31Z'
@@ -60,7 +69,11 @@ async function main() {
   const title = process.env.TITLE || 'Open-Source Contributions';
   const sortBy = process.env.SORT_BY || 'date'; // 'date' or 'count'
   const monthsAgo = process.env.MONTHS_AGO ? parseInt(process.env.MONTHS_AGO, 10) : null;
+  const excludeOrgs = process.env.EXCLUDE_ORGS ? process.env.EXCLUDE_ORGS.split(',').map(s => s.trim()).filter(Boolean) : [];
+  const includeOrgs = process.env.INCLUDE_ORGS ? process.env.INCLUDE_ORGS.split(',').map(s => s.trim()).filter(Boolean) : [];
+  const featuredPrsPath = process.env.FEATURED_PRS_PATH || './featured-prs.json';
   const useMock = process.env.USE_MOCK === 'true' || process.argv.includes('--mock');
+  const previewThemes = process.env.PREVIEW_THEMES ? process.env.PREVIEW_THEMES.split(',').map(s => s.trim()).filter(Boolean) : [];
 
   if (!username) {
     console.error('Error: GitHub username is required.');
@@ -74,9 +87,42 @@ async function main() {
   if (monthsAgo) {
     console.log(`Filtering: Last ${monthsAgo} months only`);
   }
+  if (excludeOrgs.length > 0) {
+    console.log(`Excluding orgs: ${excludeOrgs.join(', ')}`);
+  }
+  if (includeOrgs.length > 0) {
+    console.log(`Including only orgs: ${includeOrgs.join(', ')}`);
+  }
 
   try {
-    const data = useMock ? getMockData(username) : await fetchContributions(username, token);
+    let data;
+
+    if (useMock) {
+      data = getMockData(username);
+    } else {
+      data = await fetchContributions(username, token, { excludeOrgs, includeOrgs });
+    }
+
+    // featured-prs.json이 존재하면 카드에 표시할 PR을 해당 파일 기준으로 교체
+    if (!useMock && existsSync(featuredPrsPath)) {
+      try {
+        const raw = readFileSync(featuredPrsPath, 'utf-8');
+        const prList = JSON.parse(raw);
+
+        if (Array.isArray(prList) && prList.length > 0) {
+          console.log(`\nFeatured PRs mode: loading ${prList.length} PR(s) from ${featuredPrsPath}`);
+          const featuredContributions = await fetchFeaturedPRs(prList, token);
+
+          // totalPRs, totalRepos는 기존 API 결과 유지, contributions만 교체
+          data = {
+            ...data,
+            contributions: featuredContributions
+          };
+        }
+      } catch (parseErr) {
+        console.warn(`Warning: Failed to parse ${featuredPrsPath}: ${parseErr.message}. Using default mode.`);
+      }
+    }
 
     console.log(`Found ${data.totalPRs} merged PRs in ${data.totalRepos} external repositories`);
 
@@ -101,6 +147,20 @@ async function main() {
     // 파일 저장
     writeFileSync(outputPath, svg);
     console.log(`\nSVG saved to: ${outputPath}`);
+
+    // Preview 테마 SVG 생성 (README용)
+    if (previewThemes.length > 0) {
+      console.log(`\nGenerating preview themes: ${previewThemes.join(', ')}`);
+      for (const previewTheme of previewThemes) {
+        const previewSvg = data.totalRepos > 0
+          ? generateSVG(data, { theme: previewTheme, autoTheme: false, maxRepos, title, sortBy, monthsAgo })
+          : generateEmptySVG(username, { theme: previewTheme, autoTheme: false, title });
+
+        const previewPath = `./contributions-${previewTheme}.svg`;
+        writeFileSync(previewPath, previewSvg);
+        console.log(`SVG saved to: ${previewPath}`);
+      }
+    }
 
   } catch (error) {
     console.error('Error:', error.message);
