@@ -27,8 +27,7 @@
 ---
 ⦁ Adsp ('25.02. )
 
-Open Source Contributions
----
+
 ![My Contributions](./contributions.svg)
 
 
