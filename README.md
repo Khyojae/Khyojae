@@ -2,6 +2,10 @@
 
 ![My Contributions](./contributions.svg)
 
+⚙️ Open Source Contribution
+---
+- spring-projects/spring-ai #5297 - Elasticsearch IN/MIN 연산자 괄호 오류 수정
+
 
 ⚙️ Algorithm
 ---
