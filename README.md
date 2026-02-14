@@ -2,7 +2,7 @@
 
 ⚙️ Projects
 ---
-1. DOCKin-project (2025 ~ 진행중)
+1. **[DOCKin-project](https://github.com/DOCKin-project/DOCKin-backend)**(2025 ~ 진행중)
 ![System Architecture](./picture/architecture.jpg)
 - role : backend
 - Spring Boot, Java / MySQL
