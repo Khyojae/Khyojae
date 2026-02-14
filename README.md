@@ -1,20 +1,19 @@
-⚙️ Open Source Contribution
----
-- spring-projects/spring-ai #5297 - Elasticsearch IN/NIN 연산자 괄호 오류 수정 <a href="https://github.com/spring-projects/spring-ai/pull/5316#event-22560471170"><img src="https://img.shields.io/badge/PR-Resolved-success?style=flat-square&logo=github"></a>
 
-
-⚙️ Algorithm
----
-![mazandi profile](http://mazandi.herokuapp.com/api?handle=gywo1l&theme=dark)
 
 ⚙️ Projects
 ---
 1. DOCKin-project (2025 ~ 진행중)
-![](../picture/architecture.jpg)
+![Architecture](./picture/architecture.jpg)
 - role : backend
 - Spring Boot, Java / MySQL
 
-  
+⚙️ Open Source Contribution
+---
+- spring-projects/spring-ai #5297 - Elasticsearch IN/NIN 연산자 괄호 오류 수정 <a href="https://github.com/spring-projects/spring-ai/pull/5316#event-22560471170"><img src="https://img.shields.io/badge/PR-Resolved-success?style=flat-square&logo=github"></a>
+
+⚙️ Algorithm
+---
+![mazandi profile](http://mazandi.herokuapp.com/api?handle=gywo1l&theme=dark)
 
 ✍️Tech Stacks
 ---
