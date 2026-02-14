@@ -4,6 +4,7 @@
 ---
 1. **[DOCKin-project](https://github.com/DOCKin-project/DOCKin-backend)**(2025 ~ 진행중)
 ![System Architecture](./picture/architecture.jpg)
+- 개요: 조선소 근로자를 위한 AI 음성 인식, 다국어 번역, 안전·근태 관리를 통합한 모바일 앱
 - role : backend
 - Spring Boot, Java / MySQL
 - [트러블 슈팅 및 실패 기록](https://github.com/DOCKin-project/DOCKin-backend/wiki)
