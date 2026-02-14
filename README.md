@@ -6,7 +6,7 @@
 ![System Architecture](./picture/architecture.jpg)
 - role : backend
 - Spring Boot, Java / MySQL
-- * [트러블 슈팅 및 실패 기록](https://github.com/DOCKin-project/DOCKin-backend/wiki)
+- [트러블 슈팅 및 실패 기록](https://github.com/DOCKin-project/DOCKin-backend/wiki)
 
 ⚙️ Open Source Contribution
 ---
