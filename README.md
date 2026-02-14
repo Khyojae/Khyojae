@@ -6,6 +6,7 @@
 ![System Architecture](./picture/architecture.jpg)
 - role : backend
 - Spring Boot, Java / MySQL
+[![Troubleshooting](https://img.shields.io/badge/Wiki-Trouble_Shooting-blue?style=for-the-badge&logo=github)](https://github.com/DOCKin-project/DOCKin-backend/wiki)
 
 ⚙️ Open Source Contribution
 ---
