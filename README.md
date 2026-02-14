@@ -7,6 +7,14 @@
 ---
 ![mazandi profile](http://mazandi.herokuapp.com/api?handle=gywo1l&theme=dark)
 
+⚙️ Projects
+---
+1. DOCKin-project (2025 ~ 진행중)
+![](../image/architecture.jpg)
+- role : backend
+- Spring Boot, Java / MySQL
+
+  
 
 ✍️Tech Stacks
 ---
