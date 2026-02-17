@@ -1,7 +1,11 @@
+✍️Tech Stacks
+---
+<img src="https://img.shields.io/badge/java-007396?style=for-the-badge&logo=OpenJDK&logoColor=white"> <img src="https://img.shields.io/badge/springboot-6DB33F?style=for-the-badge&logo=springboot&logoColor=white"> <img src="https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=MySQL&logoColor=white"> 
+
 ⚙️ Projects
 ---
 1. **[DOCKin](https://github.com/DOCKin-project)**(2025 ~ 진행중)
-![System Architecture](./picture/architecture2.jpg)
+![System Architecture](./picture/architecture3.jpg)
 - 개요: 조선소 근로자를 위한 AI 음성 인식, 다국어 번역, 안전·근태 관리를 통합한 모바일 앱
 - Spring Boot, Java, MySQL
 - Spring WebFlux 기반 비동기 실시간 챗봇, 실시간 번역 API게이트웨이 구축
@@ -16,11 +20,6 @@
 ⚙️ Algorithm
 ---
 ![mazandi profile](http://mazandi.herokuapp.com/api?handle=gywo1l&theme=dark)
-
-✍️Tech Stacks
----
-<img src="https://img.shields.io/badge/java-007396?style=for-the-badge&logo=OpenJDK&logoColor=white"> <img src="https://img.shields.io/badge/springboot-6DB33F?style=for-the-badge&logo=springboot&logoColor=white"> <img src="https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=MySQL&logoColor=white"> 
-
 
 🎨 Activities
 ---
