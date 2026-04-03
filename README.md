@@ -11,7 +11,6 @@
 - Spring WebFlux 기반 비동기 실시간 챗봇, 실시간 번역 API게이트웨이 구축
 - STOMP 프로토콜과 Pub/Sub 모델을 적용하여, 채팅방 별 메시지 라우팅 구조를 체계화하고 서버의 메시지 처리 부하를 효율적으로 관리
 - AWS CI/CD 파이프라인 구축 및 S3 파일 업로드 구현
-- [트러블 슈팅 및 실패 기록](https://github.com/DOCKin-project/DOCKin-backend/wiki)
 
 ⚙️ Open Source Contribution
 ---
