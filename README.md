@@ -4,7 +4,7 @@
 
 ⚙️ Projects
 ---
-1. **[DOCKin](https://github.com/DOCKin-project)**(2025 ~ 진행중)
+1. **[DOCKin](https://github.com/DOCKin-project)**(2025.10 ~2026.01)
 ![System Architecture](./picture/architecture3.jpg)
 - 개요: 조선소 근로자를 위한 AI 음성 인식, 다국어 번역, 안전·근태 관리를 통합한 모바일 앱
 - Spring Boot, Java, MySQL
@@ -18,9 +18,6 @@
 
 - spring-projects/spring-security #18543 - AuthoritiesAuthorizationManager NPE 발생 오류 수정 <a href="https://github.com/spring-projects/spring-security/pull/18544"><img src="https://img.shields.io/badge/PR-Merged-success?style=flat-square&logo=github"></a>
 
-⚙️ Algorithm
----
-![mazandi profile](http://mazandi.herokuapp.com/api?handle=gywo1l&theme=dark)
 
 🎨 Activities
 ---
