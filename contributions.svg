@@ -1,15 +1,90 @@
-<svg width="480" height="150" viewBox="0 0 480 150" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#e8f4fc"/>
-      <stop offset="100%" style="stop-color:#f0e6fa"/>
-    </linearGradient>
-  </defs>
-  <rect width="480" height="150" fill="url(#bgGrad)" rx="16"/>
-  <text x="30" y="45" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="22" font-weight="700" fill="#1a1a2e">
-    Open-Source Contributions
-  </text>
-  <text x="240" y="100" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" fill="#a0a3b1" text-anchor="middle">
-    No contributions yet. Start contributing
-  </text>
+<svg width="480" height="189" viewBox="0 0 480 189" xmlns="http://www.w3.org/2000/svg">
+  
+    <style>
+      @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+      }
+      .card {
+        animation: fadeIn 0.4s ease-out forwards;
+        opacity: 0;
+      }
+      .card-0 { animation-delay: 0s; }
+      
+    </style>
+  
+  
+    <defs>
+      <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" style="stop-color:#e8f4fc"/>
+        <stop offset="100%" style="stop-color:#f0e6fa"/>
+      </linearGradient>
+    </defs>
+    <rect width="480" height="189" fill="url(#bgGrad)" rx="16"/>
+  
+  
+    <g transform="translate(18, 23)">
+      <text font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1a1a2e">
+        Open-Source Contributions
+      </text>
+      <g transform="translate(0, 26)">
+        <svg width="16" height="16" viewBox="0 0 20 20" fill="#22c55e"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd"/></svg>
+        <text x="20" y="12" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#22c55e">
+          29 PRs Merged · 1 Repo
+        </text>
+      </g>
+      <g transform="translate(364, 5)">
+        <rect width="80" height="24" rx="12" fill="#22c55e"/>
+        <text x="40" y="16" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" font-weight="800" fill="#ffffff" text-anchor="middle">
+          Score: 310
+        </text>
+      </g>
+    </g>
+  
+  
+      <g transform="translate(18, 76)" class="card card-0">
+        <!-- Card Background -->
+        <rect width="205" height="95" rx="12" fill="#1e2130"/>
+
+        <!-- Repo Icon -->
+        <g transform="translate(14, 14)">
+          <defs>
+            <clipPath id="circleView-0">
+              <circle cx="14" cy="14" r="14"/>
+            </clipPath>
+          </defs>
+          <circle cx="14" cy="14" r="14" fill="#2d3348"/>
+          <image href="data:image/png;base64,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" x="0" y="0" width="28" height="28" clip-path="url(#circleView-0)"/>
+        </g>
+
+        <!-- Repo Name & PR Number -->
+        <text x="50" y="22" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#ffffff">
+          spring-projects/...
+        </text>
+        <text x="50" y="38" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" font-weight="500" fill="#60a5fa">
+          #18544
+        </text>
+
+        <!-- PR Title -->
+        <text x="50" y="52" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" fill="#a0a3b1">
+           Fix GrantedAuthority....
+        </text>
+
+        <!-- Contribution Type Badge -->
+        <g transform="translate(14, 70)">
+          <rect width="65" height="18" rx="4" fill="#22c55e"/>
+          <text x="32.5" y="13" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="9" font-weight="700" fill="#ffffff" text-anchor="middle">
+            Bug Fix
+          </text>
+        </g>
+
+        <!-- Date -->
+        <g transform="translate(85, 70)">
+          <svg width="12" height="12" viewBox="0 0 20 20" fill="#22c55e"><path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/></svg>
+          <text x="16" y="10" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="9" fill="#6b7280">
+            Feb 23, 2026
+          </text>
+        </g>
+      </g>
+    
 </svg>
