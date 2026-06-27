@@ -7,7 +7,7 @@
 1. **[DOCKin](https://github.com/DOCKin-project)**(2025.10 ~2026.01)
 ![System Architecture](./picture/architecture3.jpg)
 - 개요: 조선소 근로자를 위한 AI 음성 인식, 다국어 번역, 안전·근태 관리를 통합한 모바일 앱
-- Spring Boot, Java, MySQL
+- <img src="https://img.shields.io/badge/java-007396?style=for-the-badge&logo=OpenJDK&logoColor=white"> <img src="https://img.shields.io/badge/springboot-6DB33F?style=for-the-badge&logo=springboot&logoColor=white"> <img src="https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=MySQL&logoColor=white">
 - Spring WebFlux 기반 비동기 실시간 챗봇, 실시간 번역 API게이트웨이 구축
 - STOMP 프로토콜과 Pub/Sub 모델을 적용하여, 채팅방 별 메시지 라우팅 구조를 체계화하고 서버의 메시지 처리 부하를 효율적으로 관리
 - AWS CI/CD 파이프라인 구축 및 S3 파일 업로드 구현
@@ -15,7 +15,7 @@
 2. **[shadowfit](https://github.com/SMU-2026-1-capstone-project/init)**(2026.03 ~진행중) 
 
 - 개요: 효율적인 운동 관리를 도와주는 AI 기반 개인 맞춤형 피트니스 앱
-- Spring Boot, Java, MySQL
+- <img src="https://img.shields.io/badge/java-007396?style=for-the-badge&logo=OpenJDK&logoColor=white"> <img src="https://img.shields.io/badge/springboot-6DB33F?style=for-the-badge&logo=springboot&logoColor=white"> <img src="https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=MySQL&logoColor=white">
 - Spring grpc 기반 비동기 실시간 운동 관절 저장 시스템 구축
 - 
 - 
