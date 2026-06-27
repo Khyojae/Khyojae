@@ -12,6 +12,14 @@
 - STOMP 프로토콜과 Pub/Sub 모델을 적용하여, 채팅방 별 메시지 라우팅 구조를 체계화하고 서버의 메시지 처리 부하를 효율적으로 관리
 - AWS CI/CD 파이프라인 구축 및 S3 파일 업로드 구현
 
+- 2. **[shadowfit](https://github.com/SMU-2026-1-capstone-project/init)**(2026.03 ~진행중) 
+
+- 개요: 효율적인 운동 관리를 도와주는 AI 기반 개인 맞춤형 피트니스 앱
+- Spring Boot, Java, MySQL
+- Spring grpc 기반 비동기 실시간 운동 관절 저장 시스템 구축
+- 
+- 
+
 ⚙️ Open Source Contribution
 ---
 - spring-projects/spring-ai #5297 - Elasticsearch IN/NIN 연산자 괄호 오류 수정 <a href="https://github.com/spring-projects/spring-ai/pull/5316#event-22560471170"><img src="https://img.shields.io/badge/PR-Resolved-success?style=flat-square&logo=github"></a>
