@@ -17,8 +17,10 @@
 - 개요: 효율적인 운동 관리를 도와주는 AI 기반 개인 맞춤형 피트니스 앱
 - <img src="https://img.shields.io/badge/java-007396?style=for-the-badge&logo=OpenJDK&logoColor=white"> <img src="https://img.shields.io/badge/springboot-6DB33F?style=for-the-badge&logo=springboot&logoColor=white"> <img src="https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=MySQL&logoColor=white">
 - Spring grpc 기반 비동기 실시간 운동 관절 저장 시스템 구축
-- 
-- 
+- AI 분석 결과를 페르소나별로 분기해 batch gRPC로 통합 전송하는 실시간 운동 피드백 파이프라인 구축
+- 세션 데이터 기반 동기화율·구간별 정확도·이전 대비 비교를 제공하는 일별 활동 리포트 API 구현
+- 부하테스트로 세션 저장 병목 실측·귀속, batch insert·keyset 페이지네이션·파티셔닝으로 대용량 조회/삭제 성능 개선
+- 다중 사용자 세션 갱신 lost-update 재현 후 원자 UPDATE·비관적 락·낙관적 락(CAS)으로 정합성 확보
 
 ⚙️ Open Source Contribution
 ---
