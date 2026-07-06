@@ -13,7 +13,7 @@
 - AWS CI/CD 파이프라인 구축 및 S3 파일 업로드 구현
 
 2. **[shadowfit](https://github.com/SMU-2026-1-capstone-project/init)**(2026.03 ~진행중) 
-
+![System Architecture](./picture/shadowfit.jpg)
 - 개요: 효율적인 운동 관리를 도와주는 AI 기반 개인 맞춤형 피트니스 앱
 - <img src="https://img.shields.io/badge/java-007396?style=for-the-badge&logo=OpenJDK&logoColor=white"> <img src="https://img.shields.io/badge/springboot-6DB33F?style=for-the-badge&logo=springboot&logoColor=white"> <img src="https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=MySQL&logoColor=white">
 - Spring grpc 기반 비동기 실시간 운동 관절 저장 시스템 구축
