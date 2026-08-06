@@ -8,14 +8,12 @@
 ![System Architecture](./picture/dockin.jpg)
 - 개요: 조선소 근로자를 위한 AI 음성 인식, 다국어 번역, 안전·근태 관리를 통합한 모바일 앱
 - <img src="https://img.shields.io/badge/java-007396?style=for-the-badge&logo=OpenJDK&logoColor=white"> <img src="https://img.shields.io/badge/springboot-6DB33F?style=for-the-badge&logo=springboot&logoColor=white"> <img src="https://img.shields.io/badge/PostgreSQL-4169E1?style=for-the-badge&logo=PostgreSQL&logoColor=white"> <img src="https://img.shields.io/badge/pgvector-4169E1?style=for-the-badge&logo=PostgreSQL&logoColor=white"> <img src="https://img.shields.io/badge/Redis-DC382D?style=for-the-badge&logo=Redis&logoColor=white"> <img src="https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=Docker&logoColor=white">
-- 다국어 임베딩 기반 **교차언어 작업일지 검색(RAG)** 구현 — 언어별 analyzer 구성 없이 한국어 질의로 베트남어 문서를, 반대로도 검색
-- 검색 권한을 **후필터가 아닌 선필터**로 설계 — 후필터는 top-k를 권한 없는 문서로 채운 뒤 버려 결과가 비는 구조적 문제가 있다
-- **MySQL → PostgreSQL + pgvector 이관** — MySQL 8.0에 ANN 인덱스가 없고 9.x의 VECTOR도 인덱스는 HeatWave 전용임을 확인한 뒤 결정 (ADR로 근거 기록)
-- **HNSW 인덱스 recall 실측** — 전체 훑기를 정답 기준선으로 recall@5 0.840, 지연 110ms → 1.11ms(99배). "인덱스를 켰다"가 아니라 "켜도 되는지 쟀다"
-- STOMP 기반 실시간 채팅 — `/pub`·`/sub` 목적지 규약으로 채팅방별 라우팅 분리, CONNECT 시점 JWT 검증으로 인증을 핸드셰이크에 고정
-- 번역·STT를 FastAPI로 위임하는 연동 계층 — 제목·본문 번역을 `Mono.zip`으로 동시 호출해 왕복을 한 번으로 합류, 외부 호출 타임아웃으로 커넥션 풀 고갈 차단
-- S3 Presigned URL 업로드 — 파일 바이트가 애플리케이션을 거치지 않는다
-- GitHub Actions CI 구축 — 배포 실패로 제거된 이전 워크플로에서 테스트까지 함께 사라져 있던 것을 CI만 분리해 복구
+- 다국어 임베딩으로 **교차언어 작업일지 검색(RAG)** 구현 — 검색 쿼리에 언어 조건이 없다. 한국어로 물어 베트남어 문서를 찾고, 그 반대도 된다
+- 검색 권한을 **선필터**로 설계 — 후필터는 top-k를 권한 없는 문서로 채운 뒤 버려 결과가 빈다
+- 근태 **동시성 제어** — 출근 중복은 Redis 분산락, 연차 차감은 비관적 락. 경합 재현 테스트로 검증했다
+- 브루트포스 5,165ms의 병목이 **DB가 아니라 클라이언트 전송(81%)** 이었다 — 계산을 DB로 옮겨 57ms, 인덱스는 그다음에 붙였다
+- `batch_size=100`이 **IDENTITY 전략에 막혀 무시되고 있었다** — 10,000건 저장에 INSERT 문장이 10,000개였고, SEQUENCE로 바꿔 실제로 묶이게 했다
+- 컨테이너 CPU 상한이 색인을 빠르게 한다고 **적어둔 근거를 대조 측정으로 뒤집었다** — 상한을 걷어내니 17% 빨라졌다
 
 2. **[shadowfit](https://github.com/Shadowfit/backend)**(2026.03 ~진행중) 
 ![System Architecture](./picture/shadowfit.jpg)
