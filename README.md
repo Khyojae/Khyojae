@@ -8,12 +8,12 @@
 ![System Architecture](./picture/dockin.jpg)
 - 개요: 조선소 근로자를 위한 AI 음성 인식, 다국어 번역, 안전·근태 관리를 통합한 모바일 앱
 - <img src="https://img.shields.io/badge/java-007396?style=for-the-badge&logo=OpenJDK&logoColor=white"> <img src="https://img.shields.io/badge/springboot-6DB33F?style=for-the-badge&logo=springboot&logoColor=white"> <img src="https://img.shields.io/badge/PostgreSQL-4169E1?style=for-the-badge&logo=PostgreSQL&logoColor=white"> <img src="https://img.shields.io/badge/pgvector-4169E1?style=for-the-badge&logo=PostgreSQL&logoColor=white"> <img src="https://img.shields.io/badge/Redis-DC382D?style=for-the-badge&logo=Redis&logoColor=white"> <img src="https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=Docker&logoColor=white">
-- 다국어 임베딩으로 **교차언어 작업일지 검색(RAG)** 구현 — 검색 쿼리에 언어 조건이 없다. 한국어로 물어 베트남어 문서를 찾고, 그 반대도 된다
-- 검색 권한을 **선필터**로 설계 — 후필터는 top-k를 권한 없는 문서로 채운 뒤 버려 결과가 빈다
-- 근태 **동시성 제어** — 출근 중복은 Redis 분산락, 연차 차감은 비관적 락. 경합 재현 테스트로 검증했다
-- 브루트포스 5,165ms의 병목이 **DB가 아니라 클라이언트 전송(81%)** 이었다 — 계산을 DB로 옮겨 57ms, 인덱스는 그다음에 붙였다
-- `batch_size=100`이 **IDENTITY 전략에 막혀 무시되고 있었다** — 10,000건 저장에 INSERT 문장이 10,000개였고, SEQUENCE로 바꿔 실제로 묶이게 했다
-- 컨테이너 CPU 상한이 색인을 빠르게 한다고 **적어둔 근거를 대조 측정으로 뒤집었다** — 상한을 걷어내니 17% 빨라졌다
+- 다국어 임베딩으로 **교차언어 작업일지 검색(RAG)** 구현 — 검색 쿼리에 언어 조건이 없는 구조로 한국어↔베트남어 양방향 검색
+- 검색 권한을 **선필터**로 설계 — 후필터가 top-k를 권한 없는 문서로 채운 뒤 버리는 구조적 결함 회피
+- 근태 **동시성 제어** — 출근 중복은 Redis 분산락, 연차 차감은 비관적 락으로 차단하고 경합 재현 테스트로 검증
+- 브루트포스 5,165ms의 병목이 **DB가 아니라 클라이언트 전송(81%)** 임을 `EXPLAIN`으로 규명 — 인덱스 없이 계산 위치만 DB로 옮겨 57ms로 70배 단축
+- `batch_size=100`이 **IDENTITY 전략에 막혀 무시되던 것**을 실측으로 확인 — 10,000건 저장에 INSERT 문장 10,000개, SEQUENCE 전환으로 배치 적용
+- 컨테이너 CPU 상한이 색인을 빠르게 한다는 **자체 가설을 대조 측정으로 반증** — 상한 제거 시 17% 향상
 
 2. **[shadowfit](https://github.com/Shadowfit/backend)**(2026.03 ~진행중) 
 ![System Architecture](./picture/shadowfit.jpg)
