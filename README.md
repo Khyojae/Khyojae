@@ -39,7 +39,7 @@
 |Type| Contents | 내용 | Date |
 | :---| :--- | :--- | :--- |
 | 해커톤| 2025 k조선 해커톤| 산업통상자원부장관상 | '25. 09. 08. ~ '25. 11. 22. |
-| 학술대회| ACK 2026 Best Paper Award| 문서 AI 추출값의 근거 검증을 위한 저장 계층 파생 규칙 기법, Korea Information Processing Society ACK 최우수논문상 | '26. 11. 07. |
+| 스마트해운물류×ICT멘토링 학술대회 | ACK 2026 Best Paper Award| 문서 AI 추출값의 근거 검증을 위한 저장 계층 파생 규칙 기법, Korea Information Processing Society ACK 최우수논문상 | '26. 11. 07. |
 
 
 
