@@ -15,7 +15,7 @@
 - `batch_size=100`을 설정해도 **IDENTITY 전략 때문에 배치가 안 먹히는 것**을 직접 측정해 확인(10,000건 저장에 INSERT 10,000번) — SEQUENCE 전략으로 바꿔 배치 INSERT가 동작하게 함
 - '컨테이너 CPU 상한을 두면 색인이 빨라진다'고 가설을 세웠으나, **비교해 보니 오히려 상한을 없앴을 때 17% 빨랐음**
 
-2. **[shadowfit](https://github.com/Shadowfit/backend)**(2026.03 ~진행중) 
+2. **[shadowfit](https://github.com/Shadowfit/backend)**(2026.03 ~10) 
 ![System Architecture](./picture/shadowfit.jpg)
 - 개요: 운동 관리를 돕는 AI 기반 개인 맞춤 피트니스 앱
 - <img src="https://img.shields.io/badge/java-007396?style=for-the-badge&logo=OpenJDK&logoColor=white"> <img src="https://img.shields.io/badge/springboot-6DB33F?style=for-the-badge&logo=springboot&logoColor=white"> <img src="https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=MySQL&logoColor=white">
