@@ -4,7 +4,7 @@
 
 ⚙️ Projects
 ---
-1. **[DOCKin](https://github.com/DOCKin-project/DOCKin-backend)**(2025.10 ~2026.01)
+1. **[DOCKin](https://github.com/DOCKin-project/DOCKin-backend)**(2025.09 ~2026.09)
 ![System Architecture](./picture/dokcin.jpg)
 - 개요: 조선소 근로자를 위한 모바일 앱으로, AI 음성 인식, 다국어 번역, 안전 및 근태 관리 기능을 제공
 - <img src="https://img.shields.io/badge/java-007396?style=for-the-badge&logo=OpenJDK&logoColor=white"> <img src="https://img.shields.io/badge/springboot-6DB33F?style=for-the-badge&logo=springboot&logoColor=white"> <img src="https://img.shields.io/badge/PostgreSQL-4169E1?style=for-the-badge&logo=PostgreSQL&logoColor=white"> <img src="https://img.shields.io/badge/Redis-DC382D?style=for-the-badge&logo=Redis&logoColor=white"> 
